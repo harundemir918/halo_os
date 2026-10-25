@@ -15,6 +15,15 @@ pub fn cmdline_has(cmdline: &str, flag: &str) -> bool {
     cmdline.split_whitespace().any(|word| word == flag)
 }
 
+/// The value of `key=value` on the kernel command line, if present. The last
+/// occurrence wins, like the kernel's own parameters.
+pub fn cmdline_value<'a>(cmdline: &'a str, key: &str) -> Option<&'a str> {
+    cmdline
+        .split_whitespace()
+        .filter_map(|word| word.strip_prefix(key)?.strip_prefix('='))
+        .next_back()
+}
+
 /// Filesystem type of `/` from the contents of `/proc/mounts`, if listed.
 ///
 /// In the initramfs this is `rootfs`; after switching to the image it is the
@@ -66,5 +75,25 @@ mod tests {
         assert_eq!(root_fstype(""), None);
         // A mountpoint that merely starts with "/" is not the root.
         assert_eq!(root_fstype("tmpfs /run tmpfs rw 0 0\n"), None);
+    }
+
+    #[test]
+    fn cmdline_value_finds_key_value_pairs() {
+        let c = "console=ttyAMA0 halo.hz=120 quiet";
+        assert_eq!(cmdline_value(c, "halo.hz"), Some("120"));
+        assert_eq!(cmdline_value(c, "console"), Some("ttyAMA0"));
+        assert_eq!(cmdline_value(c, "missing"), None);
+    }
+
+    #[test]
+    fn cmdline_value_matches_whole_keys_and_the_last_one_wins() {
+        assert_eq!(cmdline_value("xhalo.hz=90", "halo.hz"), None);
+        assert_eq!(
+            cmdline_value("halo.hz=60 halo.hz=90", "halo.hz"),
+            Some("90")
+        );
+        // A bare flag has no value.
+        assert_eq!(cmdline_value("halo.hz", "halo.hz"), None);
+        assert_eq!(cmdline_value("halo.hz=", "halo.hz"), Some(""));
     }
 }

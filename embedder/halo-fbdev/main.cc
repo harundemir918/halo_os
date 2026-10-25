@@ -1,6 +1,9 @@
-// halo-fbdev-embedder: runs one Flutter app full screen on the Linux
-// framebuffer, with the engine's software renderer, and feeds it touch or
-// pointer input from evdev.
+// halo-fbdev-embedder: runs one Flutter app full screen with the engine's
+// software renderer and feeds it touch or pointer input from evdev.
+//
+// It shows frames through DRM/KMS (a dumb buffer, flushed on every frame) and
+// falls back to the fbdev framebuffer. The fbdev emulation only flushes every
+// 50 ms (drm_fb_helper sets HZ / 20), which caps what is visible at 20 Hz.
 //
 // Interim (ROADMAP Phase 1, D-016): it lets the shell run on the device before
 // the compositor and the Wayland embedder exist (Phase 3), and needs no GPU
@@ -9,6 +12,9 @@
 //   halo-fbdev-embedder <flutter_assets dir> <icudtl.dat>
 
 #include <dirent.h>
+#include <drm/drm.h>
+#include <drm/drm_fourcc.h>
+#include <drm/drm_mode.h>
 #include <fcntl.h>
 #include <linux/input.h>
 #include <poll.h>
@@ -112,7 +118,119 @@ struct Framebuffer {
   size_t width = 0;
   size_t height = 0;
   size_t stride = 0;
+  int drm_fd = -1;       // >= 0 when frames go out through DRM
+  uint32_t drm_fb = 0;   // the DRM framebuffer to flush
 };
+
+template <typename T>
+uint64_t Ptr(std::vector<T>& v) {
+  return reinterpret_cast<uintptr_t>(v.data());
+}
+
+// drm_mode_get_connector::connection for a connected output (libdrm's
+// DRM_MODE_CONNECTED; the kernel UAPI headers do not name it).
+constexpr uint32_t kConnected = 1;
+
+// Sets up a KMS dumb buffer on the first connected connector and scans it out.
+// Raw ioctls from the kernel's UAPI headers: no libdrm.
+bool OpenDrm(Framebuffer* fb) {
+  const int fd = open("/dev/dri/card0", O_RDWR | O_CLOEXEC);
+  if (fd < 0) return false;
+
+  drm_mode_card_res res = {};
+  if (ioctl(fd, DRM_IOCTL_MODE_GETRESOURCES, &res) != 0) { close(fd); return false; }
+  std::vector<uint32_t> crtcs(res.count_crtcs), conns(res.count_connectors),
+      encs(res.count_encoders), fbs(res.count_fbs);
+  res.crtc_id_ptr = Ptr(crtcs);
+  res.connector_id_ptr = Ptr(conns);
+  res.encoder_id_ptr = Ptr(encs);
+  res.fb_id_ptr = Ptr(fbs);
+  if (ioctl(fd, DRM_IOCTL_MODE_GETRESOURCES, &res) != 0) { close(fd); return false; }
+
+  for (uint32_t conn_id : conns) {
+    drm_mode_get_connector c = {};
+    c.connector_id = conn_id;
+    if (ioctl(fd, DRM_IOCTL_MODE_GETCONNECTOR, &c) != 0) continue;
+    std::vector<drm_mode_modeinfo> modes(c.count_modes);
+    std::vector<uint32_t> encoders(c.count_encoders), props(c.count_props);
+    std::vector<uint64_t> prop_values(c.count_props);
+    c.modes_ptr = Ptr(modes);
+    c.encoders_ptr = Ptr(encoders);
+    c.props_ptr = Ptr(props);
+    c.prop_values_ptr = Ptr(prop_values);
+    if (ioctl(fd, DRM_IOCTL_MODE_GETCONNECTOR, &c) != 0) continue;
+    if (c.connection != kConnected || modes.empty()) continue;
+
+    // The CRTC: the one already driving this connector, else the first the
+    // encoder can use.
+    uint32_t crtc_id = 0;
+    drm_mode_get_encoder e = {};
+    e.encoder_id = c.encoder_id != 0 ? c.encoder_id
+                                     : (encoders.empty() ? 0 : encoders[0]);
+    if (e.encoder_id != 0 && ioctl(fd, DRM_IOCTL_MODE_GETENCODER, &e) == 0) {
+      crtc_id = e.crtc_id;
+      for (size_t i = 0; crtc_id == 0 && i < crtcs.size(); ++i) {
+        if (e.possible_crtcs & (1u << i)) crtc_id = crtcs[i];
+      }
+    }
+    if (crtc_id == 0) continue;
+
+    const drm_mode_modeinfo mode = modes[0];  // the preferred mode is first
+    drm_mode_create_dumb cd = {};
+    cd.width = mode.hdisplay;
+    cd.height = mode.vdisplay;
+    cd.bpp = 32;
+    if (ioctl(fd, DRM_IOCTL_MODE_CREATE_DUMB, &cd) != 0) continue;
+
+    drm_mode_fb_cmd2 f = {};
+    f.width = cd.width;
+    f.height = cd.height;
+    f.pixel_format = DRM_FORMAT_XRGB8888;
+    f.handles[0] = cd.handle;
+    f.pitches[0] = cd.pitch;
+    if (ioctl(fd, DRM_IOCTL_MODE_ADDFB2, &f) != 0) continue;
+
+    drm_mode_map_dumb md = {};
+    md.handle = cd.handle;
+    if (ioctl(fd, DRM_IOCTL_MODE_MAP_DUMB, &md) != 0) continue;
+    void* map = mmap(nullptr, cd.size, PROT_READ | PROT_WRITE, MAP_SHARED, fd,
+                     static_cast<off_t>(md.offset));
+    if (map == MAP_FAILED) continue;
+
+    drm_mode_crtc set = {};
+    set.crtc_id = crtc_id;
+    set.fb_id = f.fb_id;
+    set.set_connectors_ptr = reinterpret_cast<uintptr_t>(&conn_id);
+    set.count_connectors = 1;
+    set.mode_valid = 1;
+    set.mode = mode;
+    if (ioctl(fd, DRM_IOCTL_MODE_SETCRTC, &set) != 0) {
+      std::perror("halo-fbdev: DRM SETCRTC");
+      munmap(map, cd.size);
+      continue;
+    }
+
+    fb->pixels = static_cast<uint8_t*>(map);
+    fb->width = cd.width;
+    fb->height = cd.height;
+    fb->stride = cd.pitch;
+    fb->drm_fd = fd;
+    fb->drm_fb = f.fb_id;
+    std::printf("halo-fbdev: DRM card0, connector %u, mode %ux%u\n", conn_id,
+                cd.width, cd.height);
+    return true;
+  }
+  close(fd);
+  return false;
+}
+
+// Pushes the dumb buffer to the display now, not on the fbdev timer.
+void Flush(const Framebuffer& fb) {
+  if (fb.drm_fd < 0) return;
+  drm_mode_fb_dirty_cmd dirty = {};
+  dirty.fb_id = fb.drm_fb;
+  ioctl(fb.drm_fd, DRM_IOCTL_MODE_DIRTYFB, &dirty);
+}
 
 std::string ReadFile(const std::string& path) {
   std::ifstream in(path);
@@ -121,7 +239,7 @@ std::string ReadFile(const std::string& path) {
   return ss.str();
 }
 
-bool OpenFramebuffer(Framebuffer* fb) {
+bool OpenFbdev(Framebuffer* fb) {
   const std::string sysfs = "/sys/class/graphics/fb0/";
   size_t w = 0, h = 0;
   if (std::sscanf(ReadFile(sysfs + "virtual_size").c_str(), "%zu,%zu", &w,
@@ -158,6 +276,12 @@ bool OpenFramebuffer(Framebuffer* fb) {
   return true;
 }
 
+bool OpenFramebuffer(Framebuffer* fb) {
+  if (std::getenv("HALO_FORCE_FBDEV") == nullptr && OpenDrm(fb)) return true;
+  std::printf("halo-fbdev: using the fbdev framebuffer\n");
+  return OpenFbdev(fb);
+}
+
 void Clear(const Framebuffer& fb) {
   for (size_t y = 0; y < fb.height; ++y) {
     uint8_t* row = fb.pixels + y * fb.stride;
@@ -175,6 +299,8 @@ struct State {
   std::thread::id main_thread = std::this_thread::get_id();
   std::atomic<bool> quit{false};
   std::atomic<uint64_t> frames{0};
+  std::atomic<uint64_t> present_micros{0};  // time spent copying and flushing
+  uint64_t vsync_period_nanos = 16666666;  // 60 Hz; HALO_HZ overrides
 };
 
 State g;
@@ -193,14 +319,32 @@ bool Present(void*, const void* allocation, size_t row_bytes, size_t height) {
   const auto* src = static_cast<const uint8_t*>(allocation);
   const size_t rows = height < g.fb.height ? height : g.fb.height;
   const size_t bytes = row_bytes < g.fb.width * 4 ? row_bytes : g.fb.width * 4;
+  const auto t0 = std::chrono::steady_clock::now();
   for (size_t y = 0; y < rows; ++y) {
     std::memcpy(g.fb.pixels + y * g.fb.stride, src + y * row_bytes, bytes);
   }
+  Flush(g.fb);
+  const auto us = std::chrono::duration_cast<std::chrono::microseconds>(
+                      std::chrono::steady_clock::now() - t0)
+                      .count();
+  g.present_micros += static_cast<uint64_t>(us);
   if (++g.frames == 1) {
     std::printf("halo-fbdev: first frame\n");
     std::fflush(stdout);
   }
   return true;
+}
+
+// The engine asks for a vsync and waits for FlutterEngineOnVsync(baton). We
+// answer on a fixed grid of g.vsync_period_nanos, so frames are paced at the
+// configured refresh rate (the engine's own fallback timer is 60 Hz).
+void OnVsync(void*, intptr_t baton) {
+  const uint64_t period = g.vsync_period_nanos;
+  const uint64_t now = FlutterEngineGetCurrentTime();
+  const uint64_t next = (now / period + 1) * period;
+  g.tasks.Post(next, [baton, next, period] {
+    FlutterEngineOnVsync(g.engine, baton, next, next + period);
+  });
 }
 
 void Log(const char* tag, const char* message, void*) {
@@ -340,6 +484,14 @@ int main(int argc, char** argv) {
                  argv[0]);
     return 2;
   }
+  if (const char* hz = std::getenv("HALO_HZ")) {
+    const int rate = std::atoi(hz);
+    if (rate >= 1 && rate <= 360) {
+      g.vsync_period_nanos = 1000000000ull / static_cast<uint64_t>(rate);
+    }
+  }
+  std::printf("halo-fbdev: pacing frames at %llu Hz\n",
+              static_cast<unsigned long long>(1000000000ull / g.vsync_period_nanos));
   std::signal(SIGTERM, OnSignal);
   std::signal(SIGINT, OnSignal);
 
@@ -371,6 +523,7 @@ int main(int argc, char** argv) {
   args.command_line_argc = 1;
   args.command_line_argv = engine_argv;
   args.log_message_callback = Log;
+  args.vsync_callback = OnVsync;
   args.log_tag = "halo";
 
   const FlutterEngineResult result =
@@ -409,16 +562,20 @@ int main(int argc, char** argv) {
   std::thread fps([] {
     const char* trace = std::getenv("HALO_TRACE");
     if (trace == nullptr || *trace == '\0') return;
-    uint64_t last = 0;
+    uint64_t last = 0, last_micros = 0;
     while (!g.quit) {
       std::this_thread::sleep_for(std::chrono::seconds(1));
       const uint64_t now = g.frames;
+      const uint64_t micros = g.present_micros;
       if (now != last) {
-        std::printf("halo-fbdev: %llu fps\n",
-                    static_cast<unsigned long long>(now - last));
+        std::printf("halo-fbdev: %llu fps, present %llu us/frame\n",
+                    static_cast<unsigned long long>(now - last),
+                    static_cast<unsigned long long>((micros - last_micros) /
+                                                    (now - last)));
         std::fflush(stdout);
       }
       last = now;
+      last_micros = micros;
     }
   });
 

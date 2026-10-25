@@ -12,7 +12,7 @@ fn main() {
 #[cfg(target_os = "linux")]
 fn run_as_pid1() {
     use halo_sys as sys;
-    use haloinit::{FLAG_TEST_BOOT, cmdline_has, root_fstype};
+    use haloinit::{FLAG_TEST_BOOT, cmdline_has, cmdline_value, root_fstype};
     use std::process::Command;
     use std::time::Duration;
 
@@ -57,6 +57,8 @@ fn run_as_pid1() {
             .args(*args)
             .env("HOME", "/tmp")
             .env("TMPDIR", "/tmp")
+            // Frame pacing for the shell, e.g. halo.hz=120.
+            .env("HALO_HZ", cmdline_value(&cmdline, "halo.hz").unwrap_or(""))
             .env(
                 "HALO_TRACE",
                 if cmdline_has(&cmdline, "halo.trace") {

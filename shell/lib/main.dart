@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:halo_sdk/halo_sdk.dart';
 import 'package:halo_ui/halo_ui.dart';
 
+import 'dev/bench_screen.dart';
 import 'gestures.dart';
 import 'home/home_screen.dart';
 import 'lock/lock_screen.dart';
@@ -63,6 +64,7 @@ class _HaloShellState extends State<HaloShell> {
       'recents' => RecentsScreen(backend: widget.backend),
       'stream' => StreamScreen(backend: widget.backend),
       'system' => SystemScreen(backend: widget.backend),
+      'bench' => BenchScreen(backend: widget.backend),
       final app => _Placeholder(
         title: app,
         onBack: () => setState(() => _screen = 'home'),

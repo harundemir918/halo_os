@@ -129,6 +129,16 @@ void main() {
     expect(find.byType(HomeScreen), findsOneWidget);
   });
 
+  testWidgets('the bench screen slides Home side to side', (tester) async {
+    await pumpShell(tester, start: 'bench');
+    double x() => tester.getTopLeft(find.byType(HomeScreen)).dx;
+    final start = x();
+    await tester.pump(const Duration(milliseconds: 500)); // a quarter period
+    expect(x(), isNot(closeTo(start, 1)));
+    await tester.pump(const Duration(milliseconds: 1500)); // back to the start
+    expect(x(), closeTo(start, 1));
+  });
+
   testWidgets('every screen can be the start screen', (tester) async {
     for (final s in [
       'lock',
@@ -137,6 +147,7 @@ void main() {
       'recents',
       'stream',
       'system',
+      'bench',
     ]) {
       await pumpShell(tester, start: s);
       expect(tester.takeException(), isNull, reason: s);

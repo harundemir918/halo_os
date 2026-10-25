@@ -53,7 +53,7 @@ Legend: ☐ to do · ◐ in progress · ☑ done
 - ☐ Recents slats show live and frozen app surfaces
 - ☐ On-screen keyboard (shell-rendered, text-input-v3)
 
-*Baseline (2026-10-25):* the fbdev embedder sustains about 50 fps during touch drags under QEMU/HVF (CPU software rendering at 784 × 1696, debug JIT engine); `halo.trace` on the kernel command line prints it. Past 60 needs the work below: a GPU path, release AOT builds, and vsync-paced page flips.
+*Measured (2026-10-26), QEMU/HVF on an M4 Pro, CPU software rendering at 784 × 1696 with the debug JIT engine:* a continuous full-screen animation (`HALO_START=bench`) renders at the requested rate, 60, 120 and 240 fps, with each present (copy plus flush) taking about 0.2 ms. `halo.hz=N` sets the pacing and `halo.trace` prints fps. The earlier ~50 fps was the synthetic input rate. What limits what is *visible* was the fbdev emulation, which flushes at most every 50 ms (20 Hz); the embedder now shows frames through DRM/KMS with a flush per frame. Still open: pacing to a real panel's vblank (KMS page flips, needs a real or emulated vblank source), a GPU renderer, and a release engine (Google publishes only a debug embedder for Linux, so a release engine means the from-source build in D-016).
 
 **Exit:** on QEMU, launch three apps from the arc, switch between them in Recents, close one with a flick, and type into a text field. 60 fps in shell transitions on QEMU/virgl (best effort) and on the dev board.
 

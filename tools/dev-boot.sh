@@ -31,7 +31,7 @@ rootfs=$out/system.erofs
 sysroot=$out/sysroot
 engine=$out/engine
 embedder=$out/embedder/halo-fbdev-embedder
-assets=$repo/shell/build/flutter_assets
+assets=${HALO_ASSETS:-$repo/shell/build/flutter_assets}
 target=aarch64-unknown-linux-gnu
 # HALO_SCALE multiplies the 390 x 844 design frame; the shell's pixel ratio follows.
 # The width is rounded up to a multiple of 8 because, with edid=off, the guest driver
