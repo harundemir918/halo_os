@@ -1,0 +1,9 @@
+[package]
+name = "haloinit"
+description = "Halo OS PID 1. Placeholder that wires the Rust workspace; real work starts in Phase 1."
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+[lints]
+workspace = true

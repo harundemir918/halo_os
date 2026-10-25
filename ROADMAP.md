@@ -9,11 +9,11 @@ Legend: ☐ to do · ◐ in progress · ☑ done
 ## Phase 0: Foundations
 - ☑ Design exports and sources in `design/`
 - ☑ Project docs: README, CLAUDE.md, ROADMAP, ARCHITECTURE, DESIGN_SYSTEM, BUILD, DECISIONS
-- ☐ Repo skeleton (`system/`, `embedder/`, `shell/`, `apps/`, `packages/`, `kernel/`, `build/`, `third_party/`, `tools/`)
-- ☐ Pin versions: Flutter SDK, Rust toolchain, kernel LTS, LLVM
-- ☐ Build container image (host tools only)
-- ☐ CI: format, lint and tests for Rust and Dart
-- ☐ License chosen. Font licenses (OFL) recorded in `third_party/`
+- ☑ Repo skeleton. Directories that have content exist (`system/`, `packages/`, `kernel/`, `build/`, `third_party/`); the rest are created when work needs them (CLAUDE.md)
+- ☑ Pin versions: Flutter 3.47.4 (`.flutter-version`), Rust 1.99.1 (`rust-toolchain.toml`), kernel 6.18.58 (`kernel/VERSION`), LLVM 23.1.4 (`third_party/manifest.toml`; reconcile with the Flutter engine clang before Phase 1)
+- ◐ Build container image (host tools only): `build/container/Containerfile` written, never built (no container runtime on the dev machine yet)
+- ◐ CI: format, lint and tests for Rust and Dart: `.github/workflows/ci.yml` written; every step passes locally, but it has not run on GitHub yet
+- ☑ License chosen (MIT, `LICENSE`). Font licenses (OFL) recorded in `third_party/`
 
 **Exit:** a clean checkout runs `cargo test` and `flutter test` (empty but wired) in CI.
 
@@ -32,7 +32,7 @@ Legend: ☐ to do · ◐ in progress · ☑ done
 **Exit:** QEMU boots to a Flutter frame in under 3 s from kernel start, touch input works, and the image contains only what our recipes built.
 
 ## Phase 2: Shell UI (desktop, mock data)
-- ☐ `packages/halo_ui`: tokens (colors, type, notch radii, spacing), bundled fonts, `NotchBorder`
+- ☑ `packages/halo_ui`: tokens (colors, type, notch radii, spacing), bundled fonts, `NotchBorder`, `HaloTheme`
 - ☐ Widgets: Switch, ToggleRow, Dial, Slat, Segmented, Slider, Buttons, CommandField, Timeline, BatteryLine, BatteryCells, Arc, Kicker
 - ☐ `packages/halo_sdk` API surface plus the **mock** backend (fixtures matching the design copy: Elif, Design review, Room 3…)
 - ☐ Screens: Lock, Home Arc, Recents, Switchboard, Stream, System

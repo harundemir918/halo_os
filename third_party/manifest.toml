@@ -1,0 +1,48 @@
+# Pinned upstream sources. Nothing here is vendored code; entries record
+# version, checksum and license. See CLAUDE.md hard rule 1.
+
+[[source]]
+name = "linux"
+version = "6.18.58"
+note = "Mainline LTS series 6.18. Also recorded in kernel/VERSION. Pinned 2026-10-25."
+url = "https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.18.58.tar.xz"
+sha256 = "069b19f9032c4dac8149ae4b6520c35debca0f42a9f6d52ee55ba6ca9b818013"
+license = "GPL-2.0-only WITH Linux-syscall-note"
+
+[[source]]
+name = "llvm-project"
+version = "23.1.4"
+note = "Reconcile with the clang the pinned Flutter engine builds with before Phase 1 (D-007). Pinned 2026-10-25."
+url = "https://github.com/llvm/llvm-project/releases/download/llvmorg-23.1.4/llvm-project-23.1.4.src.tar.xz"
+sha256 = "819ecf7351f1a66f76b2d701d8942faaf5faeb324cb90c9d5b090de142434bb2"
+license = "Apache-2.0 WITH LLVM-exception"
+
+[[font]]
+name = "Bricolage Grotesque"
+use = "Voice: headlines, titles, body (variable font, axes opsz/wdth/wght)"
+source = "https://github.com/google/fonts/blob/main/ofl/bricolagegrotesque/BricolageGrotesque%5Bopsz,wdth,wght%5D.ttf"
+file = "packages/halo_ui/assets/fonts/BricolageGrotesque-Variable.ttf"
+sha256 = "413e7357809ddd12fd80a96a8a396de0e401638d4acd3cb3e37532f0472ac682"
+license = "OFL-1.1"
+license_file = "packages/halo_ui/assets/licenses/OFL-BricolageGrotesque.txt"
+copyright = "2022 The Bricolage Grotesque Project Authors"
+
+[[font]]
+name = "DM Mono Regular"
+use = "Labels, counts, times"
+source = "https://github.com/google/fonts/blob/main/ofl/dmmono/DMMono-Regular.ttf"
+file = "packages/halo_ui/assets/fonts/DMMono-Regular.ttf"
+sha256 = "55b4c98f123daebb3ed27947ba47b2af00554fc6284d639a540bcef5e6258ad2"
+license = "OFL-1.1"
+license_file = "packages/halo_ui/assets/licenses/OFL-DMMono.txt"
+copyright = "2020 The DM Mono Project Authors"
+
+[[font]]
+name = "DM Mono Medium"
+use = "Labels, counts, times"
+source = "https://github.com/google/fonts/blob/main/ofl/dmmono/DMMono-Medium.ttf"
+file = "packages/halo_ui/assets/fonts/DMMono-Medium.ttf"
+sha256 = "fd327daf461db87b44a87def475d251bf03b997f7c07d9680592d75dbbfaad0b"
+license = "OFL-1.1"
+license_file = "packages/halo_ui/assets/licenses/OFL-DMMono.txt"
+copyright = "2020 The DM Mono Project Authors"
