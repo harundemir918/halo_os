@@ -41,6 +41,8 @@ jobs:
       - name: halo_sdk
         working-directory: packages/halo_sdk
         run: |
+          # Unlike `flutter analyze`, `dart analyze` does not fetch dependencies.
+          dart pub get
           dart format --output=none --set-exit-if-changed .
           dart analyze
           dart test
