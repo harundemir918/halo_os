@@ -151,6 +151,38 @@ void main() {
     });
   });
 
+  group('recents', () {
+    test('start as the Recents design, with Maps in the middle', () {
+      final r = MockBackend().recents.map((a) => a.id).toList();
+      expect(r, ['messages', 'music', 'maps', 'notes', 'web']);
+      expect(r[r.length ~/ 2], 'maps');
+    });
+
+    test('closing one removes it and notifies', () async {
+      final b = MockBackend();
+      final changed = b.changes.first;
+      b.closeRecent('music');
+      await changed;
+      expect(b.recents.map((a) => a.id), ['messages', 'maps', 'notes', 'web']);
+    });
+
+    test('closing an unknown app does nothing', () {
+      final b = MockBackend();
+      b.closeRecent('nope');
+      expect(b.recents, hasLength(5));
+    });
+
+    test('clear all empties Recents', () {
+      final b = MockBackend();
+      b.clearRecents();
+      expect(b.recents, isEmpty);
+    });
+
+    test('the list cannot be modified from outside', () {
+      expect(() => MockBackend().recents.clear(), throwsUnsupportedError);
+    });
+  });
+
   test('minutesUntil never goes negative', () {
     final e = backend.nextEvent!;
     expect(e.minutesUntil(DateTime(2026, 10, 23, 11)), 0);

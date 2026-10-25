@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:halo_sdk/halo_sdk.dart';
 import 'package:halo_ui/halo_ui.dart';
 
+import 'gestures.dart';
 import 'home/home_screen.dart';
 import 'lock/lock_screen.dart';
+import 'recents/recents_screen.dart';
 import 'stream/stream_screen.dart';
 import 'switchboard/switchboard_screen.dart';
 import 'system/system_screen.dart';
@@ -37,29 +39,43 @@ class HaloShell extends StatefulWidget {
 class _HaloShellState extends State<HaloShell> {
   late String _screen = widget.start;
 
+  void _onSwipe(EdgeZone zone) => setState(() {
+    _screen = switch (zone) {
+      EdgeZone.topRight => 'switchboard',
+      EdgeZone.topLeft => 'stream',
+      // Up from the bottom: Home, and from Home, Recents.
+      EdgeZone.bottom => _screen == 'home' ? 'recents' : 'home',
+    };
+  });
+
   @override
   Widget build(BuildContext context) {
+    final screen = switch (_screen) {
+      'lock' => LockScreen(
+        backend: widget.backend,
+        onUnlock: () => setState(() => _screen = 'home'),
+      ),
+      'home' => HomeScreen(
+        backend: widget.backend,
+        onLaunch: (id) => setState(() => _screen = 'app:$id'),
+      ),
+      'switchboard' => SwitchboardScreen(backend: widget.backend),
+      'recents' => RecentsScreen(backend: widget.backend),
+      'stream' => StreamScreen(backend: widget.backend),
+      'system' => SystemScreen(backend: widget.backend),
+      final app => _Placeholder(
+        title: app,
+        onBack: () => setState(() => _screen = 'home'),
+      ),
+    };
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: HaloTheme.dark(),
       home: Scaffold(
-        body: switch (_screen) {
-          'lock' => LockScreen(
-            backend: widget.backend,
-            onUnlock: () => setState(() => _screen = 'home'),
-          ),
-          'home' => HomeScreen(
-            backend: widget.backend,
-            onLaunch: (id) => setState(() => _screen = 'app:$id'),
-          ),
-          'switchboard' => SwitchboardScreen(backend: widget.backend),
-          'stream' => StreamScreen(backend: widget.backend),
-          'system' => SystemScreen(backend: widget.backend),
-          final app => _Placeholder(
-            title: app,
-            onBack: () => setState(() => _screen = 'home'),
-          ),
-        },
+        // Lock only opens with the hold ring, so it has no edge swipes.
+        body: _screen == 'lock'
+            ? screen
+            : EdgeSwipes(onSwipe: _onSwipe, child: screen),
       ),
     );
   }

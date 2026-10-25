@@ -42,6 +42,15 @@ abstract interface class HaloBackend {
   /// Installed apps in arc order, left to right.
   List<HaloAppInfo> get apps;
 
+  /// Apps in Recents, left to right.
+  List<HaloAppInfo> get recents;
+
+  /// Closes one app in Recents.
+  void closeRecent(String id);
+
+  /// Closes every app in Recents.
+  void clearRecents();
+
   /// Notifications in Stream order: what is in play now first, then earlier.
   List<HaloNotification> get notifications;
 

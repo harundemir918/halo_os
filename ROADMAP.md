@@ -33,11 +33,11 @@ Legend: ☐ to do · ◐ in progress · ☑ done
 
 ## Phase 2: Shell UI (desktop, mock data)
 - ☑ `packages/halo_ui`: tokens (colors, type, notch radii, spacing), bundled fonts, `NotchBorder`, `HaloTheme`
-- ◐ Widgets: Switch ☑, ToggleRow ☑, Segmented ☑, Slider ☑, Buttons ☑, BatteryLine ☑, BatteryCells ☑, Kicker ☑; Dial ☐, Slat ☐, CommandField ◐ (looks right, no text entry yet), Timeline ☐, Arc ☐
+- ◐ Widgets: all done except CommandField ◐ (looks right, no text entry yet): Switch, ToggleRow, Segmented, Slider, Buttons, BatteryLine, BatteryCells, Kicker, Dial, Slats, Timeline, Arc, plus StatusRow, EventCard, ActionCard, AgendaRow, SummaryCard, MediaStrip, Avatar, Chip, icons
 - ◐ `packages/halo_sdk` API surface plus the **mock** backend (fixtures matching the design copy: Elif, Design review, Room 3…). Clock, status, next event and notifications so far
-- ◐ Screens: Lock ☑ (`shell/`, golden test, hold-to-open), Home Arc ☑ (arc drag, focus and launch), Switchboard ☑ (dials, toggles, media, battery cells), Stream ☑ (summary card, timeline), System ☑ (accordion; only Display has designed contents), Recents ☐
-- ☐ Navigation and gestures: hold-to-open, the arc's focus/launch, slat pan and flick-to-close, shell edge swipes (see open questions)
-- ☐ Golden tests against `design/screens/*.png` at 390 × 844 @2x
+- ☑ Screens: Lock, Home Arc, Recents, Switchboard, Stream, System (`shell/`). System: only Display has designed contents; the other sections say "not designed yet"
+- ☑ Navigation and gestures: hold-to-open, the arc's drag/focus/launch, slat focus and flick-to-close, shell edge swipes (the proposal in the open questions: top right Switchboard, top left Stream, bottom up Home then Recents). System has no gesture yet (`--dart-define=HALO_START=system`)
+- ◐ Golden tests at 390 × 844 @2x: every screen has one (`shell/test/goldens/`), rendered on macOS and compared with `design/screens/*.png` by eye, not by pixel diff. CI skips them (`--exclude-tags golden`)
 - ☐ Accessibility pass: semantics labels, text scaling (System → Text size), reduce motion
 
 **Exit:** all six screens match the designs in golden tests, and the shell is fully navigable on macOS desktop with mock data.

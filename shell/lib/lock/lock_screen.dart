@@ -41,6 +41,16 @@ class _LockScreenState extends State<LockScreen>
     }
   }
 
+  // After the hold completes Lock is replaced while the finger is still down,
+  // so the release arrives after dispose. Ignore it.
+  void _press() {
+    if (mounted) _hold.forward();
+  }
+
+  void _release() {
+    if (mounted) _hold.reverse();
+  }
+
   @override
   void dispose() {
     _hold.dispose();
@@ -143,9 +153,9 @@ class _LockScreenState extends State<LockScreen>
             child: Center(
               child: Listener(
                 behavior: HitTestBehavior.opaque,
-                onPointerDown: (_) => _hold.forward(),
-                onPointerUp: (_) => _hold.reverse(),
-                onPointerCancel: (_) => _hold.reverse(),
+                onPointerDown: (_) => _press(),
+                onPointerUp: (_) => _release(),
+                onPointerCancel: (_) => _release(),
                 child: AnimatedBuilder(
                   animation: _hold,
                   builder: (context, _) => HaloHoldRing(

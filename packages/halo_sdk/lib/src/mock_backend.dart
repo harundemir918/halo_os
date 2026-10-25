@@ -149,6 +149,29 @@ class MockBackend implements HaloBackend {
     return null;
   }
 
+  late final List<HaloAppInfo> _recents = [
+    for (final id in const ['messages', 'music', 'maps', 'notes', 'web'])
+      apps.firstWhere((a) => a.id == id),
+  ];
+
+  @override
+  List<HaloAppInfo> get recents => List.unmodifiable(_recents);
+
+  @override
+  void closeRecent(String id) {
+    if (_recents.any((a) => a.id == id)) {
+      _recents.removeWhere((a) => a.id == id);
+      _changes.add(null);
+    }
+  }
+
+  @override
+  void clearRecents() {
+    if (_recents.isEmpty) return;
+    _recents.clear();
+    _changes.add(null);
+  }
+
   @override
   List<HaloAppInfo> get apps => const [
     HaloAppInfo(id: 'notes', label: 'Notes'),

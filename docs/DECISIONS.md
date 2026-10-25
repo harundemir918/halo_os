@@ -49,3 +49,8 @@ System offers Dark / Light / Auto, but only dark is designed. A light palette is
 
 ## D-014 · Build host: Debian 13 (host tools only). **Decided** (2026-10-25)
 Kernel, rootfs and image builds run on Debian 13 (trixie): in a Lima VM on macOS (`build/lima/halo-builder.yaml`) or in the container (`build/container/Containerfile`). It provides host tools only. No Debian package or file ends up in the target image, so D-001 holds. To do: pin the base image by digest and the apt packages by snapshot date once the container is built.
+
+## D-015 · UI state: plain Dart, no state-management package. **Proposed** (2026-10-25)
+`halo_sdk` exposes snapshots plus a broadcast `Stream<void> changes`, and mutators on `HaloBackend`. The shell rebuilds with a small `BackendBuilder` (a `StreamBuilder`). Screen-local state (the open accordion section, the focused slat or app) lives in `State` objects. Widgets stay stateless where they can, with explicit state passed in. No Provider, Riverpod or Bloc.
+*Why:* the state is small, the SDK boundary is already an interface with a mock, and a third-party dependency would have to be vetted and pinned for the device image.
+*Revisit if:* the SDK needs fine-grained subscriptions (per-notification streams) or a screen's state becomes hard to follow.

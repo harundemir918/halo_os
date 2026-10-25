@@ -81,11 +81,19 @@ class HaloTextAction extends StatelessWidget {
     super.key,
     required this.onPressed,
     this.color = HaloColors.ash,
+    this.underline,
+    this.style,
   });
 
   final String label;
   final VoidCallback? onPressed;
   final Color color;
+
+  /// Color of the bar. Defaults to [color].
+  final Color? underline;
+
+  /// Text style. Defaults to [HaloType.textAction].
+  final TextStyle? style;
 
   @override
   Widget build(BuildContext context) {
@@ -100,11 +108,11 @@ class HaloTextAction extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.only(bottom: 2),
             decoration: BoxDecoration(
-              border: Border(bottom: BorderSide(color: color)),
+              border: Border(bottom: BorderSide(color: underline ?? color)),
             ),
             child: Text(
               HaloType.upper(label),
-              style: HaloType.textAction.copyWith(color: color),
+              style: (style ?? HaloType.textAction).copyWith(color: color),
             ),
           ),
         ),

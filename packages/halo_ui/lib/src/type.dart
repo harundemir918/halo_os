@@ -131,6 +131,15 @@ abstract final class HaloType {
   /// Label above a control (`APPEARANCE`, `TEXT SIZE`).
   static final TextStyle fieldLabel = _mono(11, 400, 0.12);
 
+  /// Rotated label on a collapsed slat (`MESSAGES`).
+  static final TextStyle slatLabel = _mono(11, 400, 0.16);
+
+  /// Count next to a screen title (`05`).
+  static final TextStyle count = _mono(13, 400, 0);
+
+  /// Small sentence under a figure (`3.4 km via Galata`).
+  static final TextStyle note = _voice(13, 400, 0);
+
   /// Section kicker (`NOW`) and list-section labels (`TODAY`).
   static final TextStyle kicker = _mono(11, 400, 0.14);
 

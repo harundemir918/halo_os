@@ -6,6 +6,10 @@ import 'dart:ui';
 abstract final class HaloColors {
   static const Color carbon = Color(0xFF0C0C0B);
   static const Color surface = Color(0xFF181816);
+
+  /// Recessed ground behind a live app surface in the focused slat.
+  static const Color well = Color(0xFF121211);
+
   static const Color bone = Color(0xFFF2F0E8);
   static const Color boneDim = Color(0xFFD8D6CC);
   static const Color ash = Color(0xFFA09E94);

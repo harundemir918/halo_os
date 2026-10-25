@@ -24,6 +24,7 @@ export 'src/widgets/media_strip.dart';
 export 'src/widgets/notification_preview.dart';
 export 'src/widgets/segmented.dart';
 export 'src/widgets/shortcut.dart';
+export 'src/widgets/slats.dart';
 export 'src/widgets/slider.dart';
 export 'src/widgets/status_row.dart';
 export 'src/widgets/summary_card.dart';

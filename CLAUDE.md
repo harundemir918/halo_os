@@ -6,7 +6,7 @@ Guide for AI agents and contributors working in this repository.
 
 **Halo OS** is a mobile OS built from scratch on the **Linux kernel**, with **no distribution** (no Ubuntu, Debian, Alpine, postmarketOS or AOSP userspace). We own PID 1 and everything above it. **All UI is Flutter**: the system shell and the apps.
 
-Current status: **pre-alpha.** Docs, design, the `halo_ui` tokens and a placeholder Rust workspace exist. Nothing boots yet. Check [ROADMAP.md](ROADMAP.md) for the active phase before starting work, and tick off items (☐ → ◐ → ☑) as you complete them.
+Current status: **pre-alpha.** The six shell screens run on macOS against mock data. A kernel and `haloinit` boot in QEMU. There is no graphical boot yet. Check [ROADMAP.md](ROADMAP.md) for the active phase before starting work, and tick off items (☐ → ◐ → ☑) as you complete them.
 
 ## Read first
 
@@ -82,8 +82,9 @@ cd packages/halo_ui && dart format --output=none --set-exit-if-changed . && flut
 
 cd packages/halo_sdk && dart analyze && dart test
 
-# Shell on macOS, 390 x 844 window, mock data (Lock screen so far)
+# Shell on macOS, 390 x 844 window, mock data. Starts on Lock; swipe edges to move around.
 cd shell && flutter run -d macos --dart-define=HALO_BACKEND=mock
+# Open on another screen: --dart-define=HALO_START=home|switchboard|stream|recents|system
 cd shell && flutter test                    # add --update-goldens after a deliberate visual change
 
 # Token gallery on macOS
