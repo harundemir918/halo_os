@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["haloinit"]
+members = ["halo-sys", "halo-initramfs", "haloinit"]
 
 [workspace.package]
 version = "0.0.1"

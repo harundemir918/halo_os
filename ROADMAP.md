@@ -21,8 +21,8 @@ Legend: ☐ to do · ◐ in progress · ☑ done
 - ☐ `halo` build driver: fetch, toolchain, recipe runner
 - ☐ Clang + glibc + libc++ sysroot for aarch64
 - ☑ Kernel config fragments for `qemu-arm64` (virtio-gpu, virtio-input, DRM, EROFS, dm-verity, cgroup2, namespaces, Landlock) (`kernel/configs/qemu-arm64.fragment`; builds and boots on 6.18.58)
-- ☐ `halo-initramfs`: mount, switch_root
-- ☐ `haloinit`: TOML units, supervision, shutdown and reboot
+- ◐ `halo-initramfs`: mount ☑, switch_root ☑ (boots an EROFS root on virtio-blk in QEMU); dm-verity and `/data` unlock ☐
+- ◐ `haloinit`: PID 1 runs from the image and powers off on request ☑; TOML units, supervision, reaping, shutdown and reboot ☐
 - ☐ `halo-devd`: uevents, device nodes, firmware loading
 - ☐ Base recipes: libdrm, Mesa (virgl, later freedreno, panfrost, v3d), libinput, libevdev, xkbcommon, freetype, fontconfig
 - ☐ Flutter engine built for the embedder target

@@ -95,7 +95,7 @@ Boot the OS in QEMU (inside the Lima VM, see docs/BUILD.md "Build host"):
 
 ```sh
 limactl shell halo-builder
-tools/dev-boot.sh kernel && tools/dev-boot.sh initrd && tools/dev-boot.sh test
+tools/dev-boot.sh kernel && tools/dev-boot.sh initrd && tools/dev-boot.sh rootfs && tools/dev-boot.sh test   # PASS: booted from the EROFS image
 ```
 
 Fast UI loop (once `shell/` exists): run the shell as a macOS desktop Flutter app with `--dart-define=HALO_BACKEND=mock` at a 390 × 844 window. Kernel, rootfs and image builds need Linux, so on macOS they run inside the build container.

@@ -1,0 +1,16 @@
+[package]
+name = "halo-initramfs"
+description = "First userspace: find the root device, mount it read-only and switch root into it."
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+[dependencies]
+thiserror = "2"
+anyhow = "1"
+
+[target.'cfg(target_os = "linux")'.dependencies]
+halo-sys = { path = "../halo-sys" }
+
+[lints]
+workspace = true

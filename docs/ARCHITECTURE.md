@@ -45,7 +45,7 @@ Status: **proposed**. Nothing here is implemented yet. Decisions marked *propose
 ## 3. Boot chain
 
 1. **Firmware → bootloader.** U-Boot on ARM boards and phones, UEFI (systemd-boot-like stub or GRUB-free EFI stub) on x86_64 and QEMU. The bootloader picks the active A/B slot and falls back after N failed boots.
-2. **Kernel + initramfs.** The initramfs is tiny: a static `halo-initramfs` binary (Rust) that
+2. **Kernel + initramfs.** The initramfs is tiny: a static `halo-initramfs` binary (Rust, `system/halo-initramfs`; mounting and switching root work today, verity and `/data` do not yet) that
    - mounts `proc`, `sys`, `devtmpfs` and `run`,
    - sets up dm-verity on `system_<slot>`, mounts it read-only (EROFS) at `/`,
    - unlocks and mounts `/data` (fscrypt/dm-crypt, see §9),

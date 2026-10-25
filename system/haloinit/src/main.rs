@@ -11,14 +11,20 @@ fn main() {
 /// PID 1 must never exit: after the early setup it parks forever.
 #[cfg(target_os = "linux")]
 fn run_as_pid1() {
-    use haloinit::{FLAG_TEST_BOOT, cmdline_has, sys};
+    use halo_sys as sys;
+    use haloinit::{FLAG_TEST_BOOT, cmdline_has, root_fstype};
     use std::time::Duration;
 
-    if let Err(e) = sys::mount("proc", "/proc", "proc") {
+    if let Err(e) = sys::mount("proc", "/proc", "proc", 0) {
         eprintln!("{NAME}: mount /proc failed: {e}");
     }
     let cmdline = std::fs::read_to_string("/proc/cmdline").unwrap_or_default();
     println!("{NAME}: cmdline: {}", cmdline.trim());
+    let mounts = std::fs::read_to_string("/proc/mounts").unwrap_or_default();
+    println!(
+        "{NAME}: root is {}",
+        root_fstype(&mounts).unwrap_or("unknown")
+    );
 
     if cmdline_has(&cmdline, FLAG_TEST_BOOT) {
         println!("{NAME}: boot ok");

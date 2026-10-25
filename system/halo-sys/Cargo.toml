@@ -1,0 +1,12 @@
+[package]
+name = "halo-sys"
+description = "Thin, safe wrappers over the Linux syscalls early boot needs."
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+[target.'cfg(target_os = "linux")'.dependencies]
+libc = "0.2"
+
+[lints]
+workspace = true
