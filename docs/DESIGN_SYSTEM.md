@@ -67,7 +67,7 @@ Two families, both SIL OFL, so they can be bundled in the system image:
 | `dialValue` | Bricolage | 38 | 800 | -0.04em | Switchboard 64 / 42 |
 | `sectionTitle` | Bricolage | 24 | 700 | -0.03em | System rows "Connections", "Display" |
 | `title` | Bricolage | 17–19 | 700 | -0.02em | Agenda rows, toggle row names |
-| `body` | Bricolage | 15–16 | 500 | -0.01em, line-height 1.3–1.5 | Notification text, lock previews |
+| `body` | Bricolage | 16 | 500 | 0, line-height 1.3 | Notification text |
 | `rowTitle` | Bricolage | 16 | 600 | 0 | Toggle row names |
 | `button` | Bricolage | 15 | 700 (secondary 500) | 0 | Navigate, Open notes, Start. Small buttons: 13 |
 | `label` | DM Mono | 11 | 400–500 | 0.08–0.16em, UPPERCASE | NOW, TODAY, ROOM 3, MAPS |
@@ -97,7 +97,7 @@ Blocks have a **large top-left radius** and small radii on the other three corne
 | `notchML` | 20 / 6 / 6 / 6 | Lock shortcut squares |
 | `notchL` | 22–26 / 4–6 | Medium cards |
 | `notchXL` | 28 / 6 / 6 / 6 | Large cards, dial plates, Recents slats, Stream summary, Lock time tile |
-| `notchXXL` | 30–34 / 6 / 6 / 6 | Hero blocks |
+| `notchXXL` | 30 / 6 / 6 / 6 | Hero blocks (Stream summary card) |
 | `radiusFlat` | 6 (all corners) | Plain rows, toggle rows |
 | `radiusFlatS` | 4 (all corners) | Unselected segments, switch track |
 | `radiusKnob` | 2 | Switch knobs, battery cells |
@@ -129,7 +129,7 @@ Blocks have a **large top-left radius** and small radii on the other three corne
 | **Command field** | `surface`, `notchM`, `line10` border. A Volt `>` prompt and a mono placeholder ("find a setting") with a solid Volt block cursor. |
 | **Time tile + event card** | Volt square tile (`notchML`) with the time in carbon mono, next to a `surface` card that has a mono kicker (`NEXT · IN 19 MIN`) and a Bricolage title. |
 | **Inline action card** | `surface`, `notchM` or `notchL`. Flare dot, mono sender and age, Bricolage question, plus small "Yes" (bone fill) and "Later" (outline) buttons. |
-| **Timeline item** | 1 px `line10` spine on the left. Node is a 9 px dot: Volt for current, Flare for alert, a hollow 1.5 px ash ring for read. Mono kicker (`MESSAGES · ELIF`) with the time on the right, body below. Text actions (`REPLY` in Volt, `LATER` in ash) are underlined with a 1.5 px bar. |
+| **Timeline item** | 1 px `line10` spine on the left. Node is a 9 px dot: Volt for current, Flare for alert, a hollow 1.5 px ash ring for read. Mono kicker (`MESSAGES · ELIF`) with the time on the right, body below. Text actions (`REPLY` in Volt, `LATER` in ash) are underlined with a 1 px bar. |
 | **Battery cells** | 10 segments, 14 high, with 4 px gaps, radius 2. Volt when filled, `line12` when empty. Partial fill is allowed on the boundary cell. |
 | **Media strip** | Volt notch square play/pause button with a `surface` card holding the title, mono artist and a 3 px progress bar (bone on `line10`). |
 | **Section kicker** | 8 × 8 Volt square followed by a mono label (`NOW`, `COLOR`, `MESSAGES`). |

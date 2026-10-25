@@ -34,6 +34,12 @@ abstract interface class HaloBackend {
   /// Installed apps in arc order, left to right.
   List<HaloAppInfo> get apps;
 
-  /// Notifications, newest first.
+  /// Notifications in Stream order: what is in play now first, then earlier.
   List<HaloNotification> get notifications;
+
+  /// The previews Lock shows, at most two.
+  List<HaloNotification> get lockPreviews;
+
+  /// Halo's digest for the top of the Stream.
+  StreamSummary get streamSummary;
 }

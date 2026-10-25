@@ -48,7 +48,7 @@ abstract final class HaloRadii {
     bottomLeft: Radius.circular(6),
   );
   static const BorderRadius notchXXL = BorderRadius.only(
-    topLeft: Radius.circular(32),
+    topLeft: Radius.circular(30),
     topRight: Radius.circular(6),
     bottomRight: Radius.circular(6),
     bottomLeft: Radius.circular(6),

@@ -137,24 +137,66 @@ class MockBackend implements HaloBackend {
     HaloAppInfo(id: 'phone', label: 'Phone'),
   ];
 
-  @override
-  List<HaloNotification> get notifications => [
+  late final List<HaloNotification> _notifications = [
     HaloNotification(
       id: 'elif-1',
       app: 'messages',
       sender: 'Elif',
-      body: 'Are we still on for 7?',
-      receivedAt: now.subtract(const Duration(minutes: 2)),
+      source: 'Messages · Elif',
+      body: 'Are we still on for 7? I booked the corner table.',
+      preview: 'Are we still on for 7?',
+      receivedAt: _at(9, 39),
       unread: true,
+      mark: StreamMark.current,
+      canReply: true,
       actionPrompt: 'Still on for 7?',
+    ),
+    HaloNotification(
+      id: 'calendar-1',
+      app: 'calendar',
+      sender: 'Calendar',
+      body: 'Design review starts in 19 minutes. Room 3.',
+      receivedAt: _at(9, 40),
+      unread: true,
+      mark: StreamMark.alert,
     ),
     HaloNotification(
       id: 'parcel-1',
       app: 'parcel',
       sender: 'Parcel',
-      body: 'Arriving 14:00 to 16:00',
-      receivedAt: now.subtract(const Duration(hours: 1)),
+      body: 'Arrives today between 14:00 and 16:00.',
+      preview: 'Arriving 14:00 to 16:00',
+      receivedAt: _at(8, 15),
+      unread: false,
+    ),
+    HaloNotification(
+      id: 'deniz-1',
+      app: 'messages',
+      sender: 'Deniz',
+      source: 'Messages · Deniz',
+      body: 'Sent you 3 files for tomorrow.',
+      receivedAt: DateTime(now.year, now.month, now.day - 1, 18, 5),
       unread: false,
     ),
   ];
+
+  @override
+  List<HaloNotification> get notifications => _notifications;
+
+  @override
+  List<HaloNotification> get lockPreviews => [
+    for (final id in const ['elif-1', 'parcel-1'])
+      _notifications.firstWhere((n) => n.id == id),
+  ];
+
+  @override
+  StreamSummary get streamSummary => const StreamSummary(
+    newCount: 4,
+    read: 11,
+    needYou: [
+      'Reply to Elif about dinner',
+      'Design review moved to Room 3',
+      'Be home 14:00 to 16:00 for the parcel',
+    ],
+  );
 }

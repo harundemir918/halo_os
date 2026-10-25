@@ -126,11 +126,60 @@ void main() {
     expect(e.minutesUntil(DateTime(2026, 10, 23, 11)), 0);
   });
 
-  test('notifications are Elif (unread) then Parcel (read)', () {
-    final n = backend.notifications;
-    expect(n.map((x) => x.sender), ['Elif', 'Parcel']);
-    expect(n.map((x) => x.unread), [true, false]);
-    expect(n.map((x) => x.age(backend.now)), ['2M', '1H']);
+  test(
+    'Lock previews are Elif (unread) then Parcel (read), with short copy',
+    () {
+      final n = backend.lockPreviews;
+      expect(n.map((x) => x.sender), ['Elif', 'Parcel']);
+      expect(n.map((x) => x.unread), [true, false]);
+      expect(n.map((x) => x.age(backend.now)), ['2M', '1H']);
+      expect(n.map((x) => x.preview), [
+        'Are we still on for 7?',
+        'Arriving 14:00 to 16:00',
+      ]);
+    },
+  );
+
+  group('Stream', () {
+    test('order is what is in play now, then earlier', () {
+      final n = backend.notifications;
+      expect(n.map((x) => x.sender), ['Elif', 'Calendar', 'Parcel', 'Deniz']);
+      expect(n.map((x) => x.mark), [
+        StreamMark.current,
+        StreamMark.alert,
+        StreamMark.read,
+        StreamMark.read,
+      ]);
+    });
+
+    test('only the Elif message can be replied to', () {
+      expect(backend.notifications.map((x) => x.canReply), [
+        true,
+        false,
+        false,
+        false,
+      ]);
+    });
+
+    test('headers: source when set, else the sender', () {
+      final n = backend.notifications;
+      expect(n[0].source, 'Messages · Elif');
+      expect(n[1].source, isNull);
+      expect(n[3].source, 'Messages · Deniz');
+    });
+
+    test('Deniz wrote yesterday', () {
+      final deniz = backend.notifications.last;
+      expect(deniz.receivedAt.day, backend.now.day - 1);
+    });
+
+    test('digest: 11 read, 3 need you, 4 new', () {
+      final s = backend.streamSummary;
+      expect(s.read, 11);
+      expect(s.newCount, 4);
+      expect(s.needYou, hasLength(3));
+      expect(s.needYou.first, 'Reply to Elif about dinner');
+    });
   });
 
   test('age rolls over to hours and days, minimum 1M', () {

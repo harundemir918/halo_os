@@ -52,7 +52,7 @@ abstract final class HaloType {
   static final TextStyle dialValue = _voice(38, 800, -0.04, height: 1);
   static final TextStyle sectionTitle = _voice(24, 700, -0.03);
   static final TextStyle title = _voice(19, 700, -0.02);
-  static final TextStyle body = _voice(16, 500, -0.01, height: 1.3);
+  static final TextStyle body = _voice(16, 500, 0, height: 1.3);
   static final TextStyle rowTitle = _voice(16, 600, 0);
 
   /// Primary button label; [buttonLight] is the secondary button.
@@ -106,6 +106,18 @@ abstract final class HaloType {
 
   /// Track title in the media strip.
   static final TextStyle mediaTitle = _voice(15, 600, 0);
+
+  /// "3 need you." on the Stream summary card. [display] is the 92 px one.
+  static final TextStyle displayS = _voice(44, 800, -0.045, height: 1);
+
+  /// Numbered lines on the summary card.
+  static final TextStyle summaryItem = _voice(15, 600, -0.005);
+
+  /// "4 NEW" chip.
+  static final TextStyle chip = _mono(11, 500, 0.1);
+
+  /// Underlined text action (`REPLY`, `LATER`).
+  static final TextStyle textAction = _mono(11, 400, 0.12);
 
   /// Section kicker (`NOW`) and list-section labels (`TODAY`).
   static final TextStyle kicker = _mono(11, 400, 0.14);

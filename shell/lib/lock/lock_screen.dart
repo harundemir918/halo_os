@@ -52,8 +52,8 @@ class _LockScreenState extends State<LockScreen>
     final now = widget.backend.now;
     final status = widget.backend.status;
     final event = widget.backend.nextEvent;
-    final notifications = widget.backend.notifications;
-    final hasUnread = notifications.any((n) => n.unread);
+    final previews = widget.backend.lockPreviews;
+    final hasUnread = previews.any((n) => n.unread);
 
     return ColoredBox(
       color: HaloColors.carbon,
@@ -108,10 +108,10 @@ class _LockScreenState extends State<LockScreen>
             right: HaloSpace.gutter,
             child: Column(
               children: [
-                for (final n in notifications.take(2))
+                for (final n in previews.take(2))
                   HaloNotificationPreview(
                     sender: n.sender,
-                    body: n.body,
+                    body: n.preview ?? n.body,
                     age: n.age(now),
                     unread: n.unread,
                   ),

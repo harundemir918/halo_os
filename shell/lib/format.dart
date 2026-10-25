@@ -47,6 +47,16 @@ abstract final class HaloFormat {
   static String statusDate(DateTime t) =>
       '${_weekdayShort[t.weekday - 1]} ${two(t.day)}.${two(t.month)}';
 
+  /// Time label in the Stream: `9:39` today, `YEST` yesterday, else `21.10`.
+  static String streamTime(DateTime t, DateTime now) {
+    final today = DateTime(now.year, now.month, now.day);
+    final day = DateTime(t.year, t.month, t.day);
+    final diff = today.difference(day).inDays;
+    if (diff == 0) return '${t.hour}:${minutes(t)}';
+    if (diff == 1) return 'YEST';
+    return '${two(t.day)}.${two(t.month)}';
+  }
+
   /// `FRIDAY — 23 OCTOBER` (the Lock date line).
   static String lockDate(DateTime t) =>
       '${_weekdays[t.weekday - 1]} — ${t.day} ${_months[t.month - 1]}'

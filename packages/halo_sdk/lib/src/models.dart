@@ -47,6 +47,10 @@ class CalendarEvent {
   }
 }
 
+/// How the Stream marks a notification: Volt for the one in play, Flare for
+/// an alert, a hollow ring once it has been dealt with.
+enum StreamMark { current, alert, read }
+
 /// A notification in the Stream timeline.
 class HaloNotification {
   const HaloNotification({
@@ -56,6 +60,10 @@ class HaloNotification {
     required this.body,
     required this.receivedAt,
     required this.unread,
+    this.source,
+    this.mark = StreamMark.read,
+    this.preview,
+    this.canReply = false,
     this.actionPrompt,
   });
 
@@ -69,6 +77,18 @@ class HaloNotification {
   final String body;
   final DateTime receivedAt;
   final bool unread;
+
+  /// Header in the Stream (`Messages · Elif`). Defaults to the sender.
+  final String? source;
+
+  /// Which dot the Stream draws.
+  final StreamMark mark;
+
+  /// Shorter copy for Lock. Defaults to [body].
+  final String? preview;
+
+  /// Whether the Stream offers REPLY and LATER.
+  final bool canReply;
 
   /// Short question Halo offers to answer from Home (`Still on for 7?`).
   final String? actionPrompt;
@@ -178,4 +198,22 @@ class QuickSettings {
     toggles: toggles ?? this.toggles,
     media: media ?? this.media,
   );
+}
+
+/// Halo's digest at the top of the Stream.
+class StreamSummary {
+  const StreamSummary({
+    required this.newCount,
+    required this.read,
+    required this.needYou,
+  });
+
+  /// Notifications since the Stream was last opened.
+  final int newCount;
+
+  /// How many things Halo read for the user.
+  final int read;
+
+  /// The few that need the user, in priority order.
+  final List<String> needYou;
 }

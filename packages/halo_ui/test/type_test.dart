@@ -14,7 +14,6 @@ void main() {
     'dialValue': HaloType.dialValue,
     'sectionTitle': HaloType.sectionTitle,
     'title': HaloType.title,
-    'body': HaloType.body,
   };
   final mono = {
     'label': HaloType.label,
@@ -27,7 +26,8 @@ void main() {
       expect(s.fontFamily, contains('Bricolage Grotesque'), reason: name);
       expect(s.letterSpacing, lessThan(0), reason: name);
     });
-    // button is the one voice style with no tracking
+    // Body copy and button labels carry no tracking.
+    expect(HaloType.body.letterSpacing, 0);
     expect(HaloType.button.letterSpacing, 0);
   });
 
