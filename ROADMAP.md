@@ -26,8 +26,8 @@ Legend: ☐ to do · ◐ in progress · ☑ done
 - ☐ `halo-devd`: uevents, device nodes, firmware loading
 - ☐ Base recipes: libdrm, Mesa (virgl, later freedreno, panfrost, v3d), libinput, libevdev, xkbcommon, freetype, fontconfig
 - ☐ Flutter engine built for the embedder target
-- ☐ Minimal DRM/EGL embedder that shows a Flutter "hello" frame full screen and reacts to touch
-- ☐ `./halo run` boots the image in QEMU
+- ◐ Minimal DRM/EGL embedder that shows a Flutter "hello" frame full screen and reacts to touch. Today `halo-splash` blits a static PNG (the Lock golden) to the virtio-gpu framebuffer (`docs/screenshots/qemu-lock.png`); live Flutter waits on D-016 and the sysroot
+- ◐ `./halo run` boots the image in QEMU: `tools/dev-boot.sh run|test|shot` until the driver exists
 
 **Exit:** QEMU boots to a Flutter frame in under 3 s from kernel start, touch input works, and the image contains only what our recipes built.
 

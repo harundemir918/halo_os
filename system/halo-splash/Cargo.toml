@@ -1,0 +1,18 @@
+[package]
+name = "halo-splash"
+description = "Draws a PNG on the framebuffer. Stands in for the shell until the Flutter embedder exists."
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+[dependencies]
+png = "0.18"
+thiserror = "2"
+anyhow = "1"
+
+[target.'cfg(target_os = "linux")'.dependencies]
+libc = "0.2"
+halo-sys = { path = "../halo-sys" }
+
+[lints]
+workspace = true

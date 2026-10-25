@@ -84,6 +84,23 @@ pub fn wait_for_path(path: &str, timeout: Duration) -> io::Result<()> {
     }
 }
 
+/// Wait for any child to exit and return its pid. `Ok(None)` means there are
+/// no children (ECHILD). PID 1 calls this in a loop to reap orphans.
+pub fn wait_any() -> io::Result<Option<i32>> {
+    let mut status: libc::c_int = 0;
+    // SAFETY: `status` is a live, writable c_int for the duration of the call.
+    let pid = unsafe { libc::waitpid(-1, &mut status, 0) };
+    if pid >= 0 {
+        return Ok(Some(pid));
+    }
+    let err = io::Error::last_os_error();
+    match err.raw_os_error() {
+        Some(libc::ECHILD) => Ok(None),
+        Some(libc::EINTR) => Ok(Some(0)),
+        _ => Err(err),
+    }
+}
+
 fn check(rc: libc::c_int) -> io::Result<()> {
     if rc == 0 {
         Ok(())

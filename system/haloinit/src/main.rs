@@ -8,12 +8,15 @@ fn main() {
     }
 }
 
-/// PID 1 must never exit: after the early setup it parks forever.
+/// PID 1 must never exit: after the early setup it reaps children forever.
 #[cfg(target_os = "linux")]
 fn run_as_pid1() {
     use halo_sys as sys;
     use haloinit::{FLAG_TEST_BOOT, cmdline_has, root_fstype};
+    use std::process::Command;
     use std::time::Duration;
+
+    const SPLASH: &str = "/sbin/halo-splash";
 
     if let Err(e) = sys::mount("proc", "/proc", "proc", 0) {
         eprintln!("{NAME}: mount /proc failed: {e}");
@@ -30,8 +33,20 @@ fn run_as_pid1() {
         println!("{NAME}: boot ok");
         let e = sys::poweroff();
         eprintln!("{NAME}: poweroff failed: {e}");
+    } else if std::path::Path::new(SPLASH).exists() {
+        // Stands in for the shell until the Flutter embedder exists.
+        match Command::new(SPLASH).spawn() {
+            Ok(child) => println!("{NAME}: started {SPLASH} (pid {})", child.id()),
+            Err(e) => eprintln!("{NAME}: cannot start {SPLASH}: {e}"),
+        }
     }
+
     loop {
-        std::thread::sleep(Duration::from_secs(3600));
+        match sys::wait_any() {
+            Ok(Some(pid)) if pid > 0 => println!("{NAME}: child {pid} exited"),
+            Ok(Some(_)) => {}
+            // No children (or an error): wait a while before looking again.
+            Ok(None) | Err(_) => std::thread::sleep(Duration::from_secs(1)),
+        }
     }
 }
