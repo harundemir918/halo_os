@@ -1,0 +1,159 @@
+# Halo design system
+
+This is the source of truth for the Halo look, taken from `design/`. The PNGs in `design/screens/` are the visual reference. The `.dc.html` files in `design/source/` hold the exact numbers as inline styles. If this document and the source files disagree, the source files win. Fix this document when that happens.
+
+All sizes are logical pixels on the 390 × 844 reference frame. The PNG exports are @2x.
+
+## 1. Principles
+
+The design language sheet (`language.png`) states three refusals and four rules.
+
+**No grid · No glass · No dock.**
+
+| # | Rule | What it means in code |
+|---|---|---|
+| 01 | **Arc, not grid** | Apps sit on an arc at the bottom of Home, in thumb reach. The top of the screen is for what matters now: the next event, an urgent message. Never build an icon grid. |
+| 02 | **Stream, not stack** | Notifications form one timeline with time as the spine. Halo puts a summary card at the top ("3 need you."), and the user decides what to do. Never build stacked or grouped notification cards. |
+| 03 | **Controls look like controls** | Use square-knob switches, ring dials and slats. Never build a grid of toggle tiles. |
+| 04 | **Solid, with one signal** | No blur, no translucency and no backdrop filters. Volt is the only accent, and it means *on, active or yours*. |
+
+## 2. Color
+
+| Token | Hex | Role |
+|---|---|---|
+| `carbon` | `#0C0C0B` | Ground. Screen background and text on Volt. |
+| `surface` | `#181816` | Solid cards, slats, buttons and dial plates |
+| `bone` | `#F2F0E8` | Primary text and the "Yes" button fill |
+| `boneDim` | `#D8D6CC` | Secondary body text (notification bodies) |
+| `ash` | `#A09E94` | Mono labels, metadata, inactive text |
+| `volt` | `#D6FF3F` | Signal: on, active, current, yours, primary action |
+| `flare` | `#FF5B2E` | Unread and alert only |
+| `voltLine` | `rgba(214,255,63,0.55)` | Border of the focused slat in Recents |
+
+**Hairlines and borders** are white at low alpha. Use the named steps below instead of making up new ones:
+
+| Token | Value | Typical use |
+|---|---|---|
+| `line05` | `rgba(255,255,255,0.05)` | Faintest decoration |
+| `line07` | `rgba(255,255,255,0.07)` | Background concentric rings (Lock) |
+| `line08` | `rgba(255,255,255,0.08)` | Card and slat borders |
+| `line10` | `rgba(255,255,255,0.10)` | Row dividers, battery bar track, lock card borders |
+| `line12` | `rgba(255,255,255,0.12)` | App circle borders |
+| `line16` | `rgba(255,255,255,0.16)` | Arc guide ring (Home) |
+| `line22` | `rgba(255,255,255,0.22)` | Outline (secondary) button borders |
+
+Rules:
+- Volt is used once per area with one meaning. If something is not on, active, current or primary, it must not be Volt.
+- Flare is never decoration. It always stands for an unread or alert state.
+- Text on Volt is always `carbon`.
+- There is only a dark appearance in the designs. System offers Dark / Light / Auto, but no light palette has been designed yet. See [ROADMAP](../ROADMAP.md) open questions.
+
+## 3. Typography
+
+Two families, both SIL OFL, so they can be bundled in the system image:
+
+- **Bricolage Grotesque** (400, 500, 700, 800) is the voice: headlines, titles and body text.
+- **DM Mono** (400, 500) is for labels, counts and times. Labels are UPPERCASE with positive tracking.
+
+| Style | Family | Size | Weight | Tracking | Seen in |
+|---|---|---|---|---|---|
+| `clockHero` | Bricolage | 196 | 800 | -0.05em, line-height 0.8 | Lock clock (hours solid, minutes outlined) |
+| `display` | Bricolage | 92 | 800 | -0.045em | Stream summary "3 need you." (scaled) |
+| `screenTitle` | Bricolage | 36–44 | 800 | -0.04em | "Switchboard", "Stream", "System", "Recent" |
+| `headline` | Bricolage | 34–42 | 800 | -0.04em | Home "Design review in 19 min" |
+| `dialValue` | Bricolage | 38 | 800 | -0.04em | Switchboard 64 / 42 |
+| `sectionTitle` | Bricolage | 24 | 700 | -0.03em | System rows "Connections", "Display" |
+| `title` | Bricolage | 17–19 | 700 | -0.02em | Agenda rows, toggle row names |
+| `body` | Bricolage | 15–16 | 500 | -0.01em, line-height 1.3–1.5 | Notification text, lock previews |
+| `button` | Bricolage | 15–16 | 600–700 | 0 | Navigate, Open notes, Start |
+| `label` | DM Mono | 11 | 400–500 | 0.08–0.16em, UPPERCASE | NOW, TODAY, ROOM 3, MAPS |
+| `labelSmall` | DM Mono | 10–10.5 | 400 | 0.08–0.1em, UPPERCASE | Dial captions, tick legends |
+| `monoValue` | DM Mono | 12–14 | 500 | 0.06em | Times "10:00", counts, status bar |
+
+Rules:
+- Times, counts, percentages and units are set in DM Mono.
+- Headlines get negative tracking. Mono labels get positive tracking. Never the other way round.
+- Hierarchy comes from weight and size. Don't add colors for hierarchy beyond `bone`, `boneDim` and `ash`.
+
+## 4. Shape: "the notch"
+
+> One big corner, three small. The notch marks the start of every block.
+
+Blocks have a **large top-left radius** and small radii on the other three corners. The large corner grows with the block's size:
+
+| Token | Radius (TL / TR / BR / BL) | Use |
+|---|---|---|
+| `notchXS` | 10 / 3 / 3 / 3 | Tiny chips |
+| `notchS` | 12 / 4 / 4 / 4 | Small buttons ("Yes", "Later") |
+| `notchM` | 18 / 4 / 4 / 4 | Buttons, inputs, avatar |
+| `notchML` | 20 / 6 / 6 / 6 | Lock time tile, lock shortcut squares |
+| `notchL` | 22–26 / 4–6 | Medium cards |
+| `notchXL` | 28 / 6 / 6 / 6 | Large cards, dial plates, Recents slats, Stream summary |
+| `notchXXL` | 30–34 / 6 / 6 / 6 | Hero blocks |
+| `radiusFlat` | 4–6 (all corners) | Plain rows, toggle rows, segmented options |
+| `radiusKnob` | 2 | Switch knobs, battery cells |
+
+**Circles are for apps only.** App icons are 52 × 52 circles (radius 26) with a `line12` border on `surface`. The focused app grows (to about 68) and fills with Volt. Nothing else is round, except for status dots (8–9 px), the dials, and the lock "hold to open" ring.
+
+## 5. Spacing and layout
+
+- Reference frame: 390 × 844. Lay out for that frame and scale by width class. Don't hard-code absolute positions in production widgets.
+- Screen gutter: **24 px** left and right.
+- Status row: top 16 px, DM Mono 12–13. Time and date on the left (`09:41 FRI 23.10`, time in bone 500 and date in ash). Network and battery on the right (`5G · WI-FI · 82%`).
+- **Battery line**: a 3 px bar across the very top of every screen. The `line10` track is filled with Volt to the battery percentage. This is Halo's battery indicator, so don't add a separate battery icon.
+- List rows: 13–16 px vertical padding with `line10` hairline dividers.
+- Common gaps: 4, 6, 8, 12, 14, 18 px.
+- Touch targets are at least 44 × 44.
+
+## 6. Components
+
+| Component | Spec |
+|---|---|
+| **Switch** | 44 × 24 track, radius 4. **On**: Volt track with a 16 × 16 carbon square knob (radius 2) on the right. **Off**: transparent track with a `line22` border and an ash square knob on the left. |
+| **Toggle row** | `surface` row, radius 6, height about 52, `line08` border. When on, a 3 px Volt bar runs down the left edge. Title in Bricolage 700, sub-label in DM Mono ash (`HOME-5G`, `2 DEVICES`, `WORK · UNTIL 11:00`). |
+| **Ring dial** | Plate is `surface` with `notchXL`, 132 × 200 per half. A tick ring of short `line` ticks surrounds a track ring and a value arc. Volt means auto/active. Bone means a manual level. The value sits in the center in `dialValue` with a mono caption under it (`LIGHT`, `SOUND`), and a mono footer below (`AUTO · ON`, `MEDIA · RING`). The user drags around the ring to set the value. |
+| **Slat** | Tall vertical card, `surface`, `notchXL`, `line08` border. Collapsed slats are 36 wide with the icon at the top and a rotated mono label. The focused slat expands and shows the app's live content with a `voltLine` border. Flick up to close. |
+| **Segmented control** | Equal options, height about 40, radius 4. Selected: Volt fill with carbon mono text and `notchM`. Others: `line22` outline. |
+| **Slider** | 2 px track. Volt fill up to the value, `line10` after it. Knob is a Volt rounded rectangle about 14 × 20, radius 4. Value in mono on the right of the label row. |
+| **Primary button** | Volt fill, carbon text, `notchM`, height about 44. |
+| **Secondary button** | Transparent, `line22` border, bone text, `notchM`. |
+| **Command field** | `surface`, `notchM`, `line10` border. A Volt `>` prompt and a mono placeholder ("find a setting") with a solid Volt block cursor. |
+| **Time tile + event card** | Volt square tile (`notchML`) with the time in carbon mono, next to a `surface` card that has a mono kicker (`NEXT · IN 19 MIN`) and a Bricolage title. |
+| **Inline action card** | `surface`, `notchM` or `notchL`. Flare dot, mono sender and age, Bricolage question, plus small "Yes" (bone fill) and "Later" (outline) buttons. |
+| **Timeline item** | 1 px `line10` spine on the left. Node is a 9 px dot: Volt for current, Flare for alert, a hollow 1.5 px ash ring for read. Mono kicker (`MESSAGES · ELIF`) with the time on the right, body below. Text actions (`REPLY` in Volt, `LATER` in ash) are underlined with a 1.5 px bar. |
+| **Battery cells** | 11 segments with 4 px gaps, radius 2. Volt when filled, `surface` when empty. Partial fill is allowed on the boundary cell. |
+| **Media strip** | Volt notch square play/pause button with a `surface` card holding the title, mono artist and a 3 px progress bar (bone on `line10`). |
+| **Section kicker** | 8 × 8 Volt square followed by a mono label (`NOW`, `COLOR`, `MESSAGES`). |
+
+Icons: 24 × 24 grid, 1.6–1.8 px stroke, round caps and joins, outline only, colored `bone` (carbon on Volt). Source paths are in `Home.dc.html`.
+
+## 7. Screens
+
+| Screen | Source | Purpose and anatomy |
+|---|---|---|
+| **Lock** | `Main.dc.html` / `lock.png` | `LOCKED` status, giant clock (hours solid bone, minutes outlined), mono date, the next event as a time tile + card, two notification preview rows (Flare dot = unread, hollow = read). The background is concentric `line07` rings around a point at the bottom right, with one Volt arc segment. Bottom row: flashlight and camera notch squares on either side of the **hold-to-open** ring, which fills with Volt while you hold. |
+| **Home ("Home Arc")** | `Home.dc.html` / `home.png` | `NOW` kicker, a headline about the most relevant thing, a context mono line, a primary and a secondary action, the `TODAY` agenda, and an inline action card for the top message. At the bottom are 7 app circles on an arc (center `195,900`, guide radius 190) with the focused app in the middle, enlarged and Volt, a short Volt arc segment, and a label (`● MESSAGES`). The **Ask Halo** button sits under the arc. Order left to right: Notes, Maps, Music, **Messages**, Camera, Web, Phone. |
+| **Recents** | `Switcher.dc.html` / `recents.png` | Title `Recent` with a Volt mono count (`05`) and `CLEAR ALL`. Slats in a row: collapsed slats on either side, the focused slat in the middle showing a live app surface (Maps route with a "12 min / Start" card). Footer hint: `FLICK A SLAT UP TO CLOSE`. |
+| **Switchboard** | `Control.dc.html` / `switchboard.png` | Quick controls. Two ring dials (Light 64 auto, Sound 42), toggle rows (Wi-Fi, Bluetooth, Cellular, Airplane, Focus), a media strip, and battery cells with `FULL BY 10:20`. |
+| **Stream** | `Notifications.dc.html` / `stream.png` | Title with a `4 NEW` Volt chip. A Volt summary card ("HALO READ 11 THINGS FOR YOU / 3 need you." plus a numbered list), then the timeline in `NOW` and `EARLIER` sections. |
+| **System** | `Settings.dc.html` / `system.png` | The Settings app. Title and avatar notch (`AS`), a command field, then numbered sections (01 Connections, 02 Display, 03 Sound, 04 Focus, 05 Privacy, 06 Battery) with a mono status on the right. The open section is marked by a Volt number, a Volt `OPEN` label and a Volt hairline, and shows its controls inline (an accordion, not a page push). |
+| **Design language** | `Language.dc.html` / `language.png` | Reference sheet for tokens and rules |
+
+## 8. Motion
+
+The designs are static and no motion spec exists yet. Until one is written:
+- Motion should feel physical and solid: no fades over blur, no parallax glass.
+- Arc: apps rotate along the arc. The focused app scales up and turns Volt.
+- Slats: horizontal pan changes focus. Vertical flick closes, with velocity-based dismissal.
+- Dials and the hold-to-open ring: the value arc follows the finger 1:1.
+- Default durations are 150–250 ms with standard easing. Respect a system "reduce motion" setting.
+
+## 9. Implementation mapping
+
+The design system ships as the Dart package `packages/halo_ui`:
+
+- `HaloColors`, `HaloType`, `HaloRadii` (notch tokens), `HaloSpace` are generated or handwritten from this document.
+- `HaloTheme` provides a `ThemeData` plus a `ThemeExtension` for the tokens that Material doesn't model.
+- Widgets: `HaloSwitch`, `HaloToggleRow`, `HaloDial`, `HaloSlat`, `HaloSegmented`, `HaloSlider`, `HaloButton`, `HaloCommandField`, `HaloTimeline`, `HaloBatteryLine`, `HaloBatteryCells`, `HaloArc`, `HaloKicker`, `NotchBorder` (a `ShapeBorder` for the asymmetric radius).
+- Fonts are bundled as assets in `halo_ui`. Don't use `google_fonts` (there is no network fetching at runtime on the device).
+- Golden tests compare each shell screen with mock data against `design/screens/*.png` at 390 × 844 @2x.
