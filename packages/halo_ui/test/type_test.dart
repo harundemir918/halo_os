@@ -44,6 +44,18 @@ void main() {
     expect(HaloType.clockHero.height, 0.8);
   });
 
+  test('line heights come from design/source', () {
+    for (final s in [
+      HaloType.display,
+      HaloType.screenTitle,
+      HaloType.headline,
+      HaloType.dialValue,
+    ]) {
+      expect(s.height, 1);
+    }
+    expect(HaloType.body.height, 1.3);
+  });
+
   test('variable weight axis matches the declared weight', () {
     expect(HaloType.display.fontWeight, FontWeight.w800);
     expect(HaloType.display.fontVariations, [FontVariation.weight(800)]);

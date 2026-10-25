@@ -44,13 +44,13 @@ abstract final class HaloType {
 
   // Voice: Bricolage Grotesque. Negative tracking.
   static final TextStyle clockHero = _voice(196, 800, -0.05, height: 0.8);
-  static final TextStyle display = _voice(92, 800, -0.045);
-  static final TextStyle screenTitle = _voice(40, 800, -0.04);
-  static final TextStyle headline = _voice(38, 800, -0.04);
-  static final TextStyle dialValue = _voice(38, 800, -0.04);
+  static final TextStyle display = _voice(92, 800, -0.045, height: 1);
+  static final TextStyle screenTitle = _voice(36, 800, -0.04, height: 1);
+  static final TextStyle headline = _voice(38, 800, -0.04, height: 1);
+  static final TextStyle dialValue = _voice(38, 800, -0.04, height: 1);
   static final TextStyle sectionTitle = _voice(24, 700, -0.03);
-  static final TextStyle title = _voice(18, 700, -0.02);
-  static final TextStyle body = _voice(16, 500, -0.01, height: 1.4);
+  static final TextStyle title = _voice(19, 700, -0.02);
+  static final TextStyle body = _voice(16, 500, -0.01, height: 1.3);
   static final TextStyle button = _voice(16, 700, 0);
 
   // Mono: DM Mono. Positive tracking, UPPERCASE for labels.
