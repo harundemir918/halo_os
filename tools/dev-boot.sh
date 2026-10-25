@@ -33,9 +33,15 @@ engine=$out/engine
 embedder=$out/embedder/halo-fbdev-embedder
 assets=$repo/shell/build/flutter_assets
 target=aarch64-unknown-linux-gnu
-# HALO_SCALE multiplies the 390 x 844 design frame (the shell's pixel ratio follows).
+# HALO_SCALE multiplies the 390 x 844 design frame; the shell's pixel ratio follows.
+# The width is rounded up to a multiple of 8 because, with edid=off, the guest driver
+# does that itself. edid=off matters on a real display window: QEMU then tells the
+# guest the window size, the guest reprobes, and the software renderer, which only
+# draws on change, leaves the display "not active".
 scale=${HALO_SCALE:-1}
-display_args=(-device "virtio-gpu-pci,xres=$((390 * scale)),yres=$((844 * scale))" -device virtio-tablet-pci -device virtio-keyboard-pci)
+xres=$(((390 * scale + 7) / 8 * 8))
+yres=$((844 * xres / 390))
+display_args=(-device "virtio-gpu-pci,xres=$xres,yres=$yres,edid=off" -device virtio-tablet-pci -device virtio-keyboard-pci)
 
 manifest() { # manifest <source-name> <key>
   python3 -I - "$repo/third_party/manifest.toml" "$1" "$2" <<'EOF'

@@ -15,6 +15,10 @@ dir=${HALO_RUN_DIR:-$HOME/.cache/halo/run}
 # display makes a crisp 390 x 844 point window. Use HALO_SCALE=1 on a small
 # screen. (zoom-to-fit crops the content on recent macOS, so it is off.)
 scale=${HALO_SCALE:-2}
+# Multiple-of-8 width, and no EDID (see tools/dev-boot.sh): with EDID on, the Cocoa
+# window's size is sent to the guest, which reprobes and blanks the display.
+xres=$(((390 * scale + 7) / 8 * 8))
+yres=$((844 * xres / 390))
 display=${HALO_QEMU_DISPLAY:-cocoa}
 
 command -v qemu-system-aarch64 >/dev/null || { echo "install QEMU: brew install qemu"; exit 1; }
@@ -32,7 +36,7 @@ exec qemu-system-aarch64 \
   -kernel "$dir/Image" -initrd "$dir/initramfs.cpio.gz" \
   -drive "file=$dir/system.erofs,if=none,format=raw,id=root,readonly=on" \
   -device virtio-blk-device,drive=root \
-  -device "virtio-gpu-pci,xres=$((390 * scale)),yres=$((844 * scale))" \
+  -device "virtio-gpu-pci,xres=$xres,yres=$yres,edid=off" \
   -device virtio-tablet-pci -device virtio-keyboard-pci \
   -append "console=ttyAMA0 root=/dev/vda rootfstype=erofs ro vt.global_cursor_default=0 consoleblank=0" \
   -display "$display" -serial stdio -no-reboot
