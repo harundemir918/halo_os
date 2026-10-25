@@ -20,7 +20,7 @@ Legend: ☐ to do · ◐ in progress · ☑ done
 ## Phase 1: Boot to pixels (QEMU)
 - ☐ `halo` build driver: fetch, toolchain, recipe runner
 - ☐ Clang + glibc + libc++ sysroot for aarch64
-- ☐ Kernel config fragments for `qemu-arm64` (virtio-gpu, virtio-input, DRM, EROFS, dm-verity, cgroup2, namespaces, Landlock)
+- ☑ Kernel config fragments for `qemu-arm64` (virtio-gpu, virtio-input, DRM, EROFS, dm-verity, cgroup2, namespaces, Landlock) (`kernel/configs/qemu-arm64.fragment`; builds and boots on 6.18.58)
 - ☐ `halo-initramfs`: mount, switch_root
 - ☐ `haloinit`: TOML units, supervision, shutdown and reboot
 - ☐ `halo-devd`: uevents, device nodes, firmware loading

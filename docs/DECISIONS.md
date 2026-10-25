@@ -46,3 +46,6 @@ On-device model versus opt-in cloud, the privacy model and the hardware requirem
 
 ## D-013 · Light appearance. **Open**
 System offers Dark / Light / Auto, but only dark is designed. A light palette is needed before Auto/Light can ship.
+
+## D-014 · Build host: Debian 13 (host tools only). **Decided** (2026-10-25)
+Kernel, rootfs and image builds run on Debian 13 (trixie): in a Lima VM on macOS (`build/lima/halo-builder.yaml`) or in the container (`build/container/Containerfile`). It provides host tools only. No Debian package or file ends up in the target image, so D-001 holds. To do: pin the base image by digest and the apt packages by snapshot date once the container is built.

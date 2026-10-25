@@ -1,9 +1,12 @@
 [package]
 name = "haloinit"
-description = "Halo OS PID 1. Placeholder that wires the Rust workspace; real work starts in Phase 1."
+description = "Halo OS PID 1."
 version.workspace = true
 edition.workspace = true
 publish.workspace = true
+
+[target.'cfg(target_os = "linux")'.dependencies]
+libc = "0.2"
 
 [lints]
 workspace = true
