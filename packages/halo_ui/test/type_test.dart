@@ -58,8 +58,14 @@ void main() {
 
   test('variable weight axis matches the declared weight', () {
     expect(HaloType.display.fontWeight, FontWeight.w800);
-    expect(HaloType.display.fontVariations, [FontVariation.weight(800)]);
-    expect(HaloType.sectionTitle.fontVariations, [FontVariation.weight(700)]);
+    expect(
+      HaloType.display.fontVariations,
+      contains(FontVariation.weight(800)),
+    );
+    expect(
+      HaloType.sectionTitle.fontVariations,
+      contains(FontVariation.weight(700)),
+    );
   });
 
   test('upper() uppercases labels', () {

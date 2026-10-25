@@ -38,3 +38,16 @@ jobs:
       - name: halo_ui gallery
         working-directory: packages/halo_ui/example
         run: flutter analyze
+      - name: halo_sdk
+        working-directory: packages/halo_sdk
+        run: |
+          dart format --output=none --set-exit-if-changed .
+          dart analyze
+          dart test
+      # Goldens are rendered on macOS, so CI skips the `golden` tag for now.
+      - name: shell
+        working-directory: shell
+        run: |
+          dart format --output=none --set-exit-if-changed .
+          flutter analyze
+          flutter test --exclude-tags golden

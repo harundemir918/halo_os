@@ -23,6 +23,8 @@ abstract final class HaloType {
     package: package,
     fontSize: size,
     fontWeight: FontWeight.values[weight ~/ 100 - 1],
+    // The design export uses the font's default optical size, so we do too
+    // (setting opsz from the font size makes large text visibly narrower).
     fontVariations: [FontVariation.weight(weight.toDouble())],
     letterSpacing: size * tracking,
     height: height,
@@ -65,6 +67,21 @@ abstract final class HaloType {
   static final TextStyle label = _mono(11, 500, 0.12);
   static final TextStyle labelSmall = _mono(10.5, 400, 0.09);
   static final TextStyle monoValue = _mono(13, 500, 0.06);
+
+  /// Status row at the top of every screen (`LOCKED`, `5G · WI-FI · 82%`).
+  static final TextStyle status = _mono(11, 400, 0.08);
+
+  /// Date line under the Lock clock (`FRIDAY — 23 OCTOBER`).
+  static final TextStyle dateLine = _mono(12, 400, 0.14);
+
+  /// Time inside the Volt tile (`10:00`).
+  static final TextStyle tileTime = _mono(15, 500, 0);
+
+  /// Title in an event card (`Design review · Room 3`).
+  static final TextStyle cardTitle = _voice(18, 700, -0.01);
+
+  /// Notification preview body on Lock.
+  static final TextStyle preview = _voice(14, 400, 0);
 
   /// Section kicker (`NOW`) and list-section labels (`TODAY`).
   static final TextStyle kicker = _mono(11, 400, 0.14);

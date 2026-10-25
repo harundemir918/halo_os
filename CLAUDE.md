@@ -80,8 +80,21 @@ cd system && cargo fmt --check && cargo clippy --workspace --all-targets -- -D w
 # Dart (Flutter pinned in .flutter-version)
 cd packages/halo_ui && dart format --output=none --set-exit-if-changed . && flutter analyze && flutter test
 
+cd packages/halo_sdk && dart analyze && dart test
+
+# Shell on macOS, 390 x 844 window, mock data (Lock screen so far)
+cd shell && flutter run -d macos --dart-define=HALO_BACKEND=mock
+cd shell && flutter test                    # add --update-goldens after a deliberate visual change
+
 # Token gallery on macOS
 cd packages/halo_ui/example && flutter run -d macos
+```
+
+Boot the OS in QEMU (inside the Lima VM, see docs/BUILD.md "Build host"):
+
+```sh
+limactl shell halo-builder
+tools/dev-boot.sh kernel && tools/dev-boot.sh initrd && tools/dev-boot.sh test
 ```
 
 Fast UI loop (once `shell/` exists): run the shell as a macOS desktop Flutter app with `--dart-define=HALO_BACKEND=mock` at a 390 × 844 window. Kernel, rootfs and image builds need Linux, so on macOS they run inside the build container.

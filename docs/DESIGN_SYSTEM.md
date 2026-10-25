@@ -94,9 +94,9 @@ Blocks have a **large top-left radius** and small radii on the other three corne
 | `notchS` | 12 / 4 / 4 / 4 | Small buttons ("Yes", "Later") |
 | `notchSM` | 16 / 4 / 4 / 4 | Selected segment |
 | `notchM` | 18 / 4 / 4 / 4 | Buttons, inputs, avatar |
-| `notchML` | 20 / 6 / 6 / 6 | Lock time tile, lock shortcut squares |
+| `notchML` | 20 / 6 / 6 / 6 | Lock shortcut squares |
 | `notchL` | 22–26 / 4–6 | Medium cards |
-| `notchXL` | 28 / 6 / 6 / 6 | Large cards, dial plates, Recents slats, Stream summary |
+| `notchXL` | 28 / 6 / 6 / 6 | Large cards, dial plates, Recents slats, Stream summary, Lock time tile |
 | `notchXXL` | 30–34 / 6 / 6 / 6 | Hero blocks |
 | `radiusFlat` | 6 (all corners) | Plain rows, toggle rows |
 | `radiusFlatS` | 4 (all corners) | Unselected segments, switch track |
