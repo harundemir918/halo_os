@@ -1,0 +1,32 @@
+# Pinned upstream sources. Nothing here is vendored code; entries record
+# version, checksum and license. See CLAUDE.md hard rule 1.
+
+[[font]]
+name = "Bricolage Grotesque"
+use = "Voice: headlines, titles, body (variable font, axes opsz/wdth/wght)"
+source = "https://github.com/google/fonts/blob/main/ofl/bricolagegrotesque/BricolageGrotesque%5Bopsz,wdth,wght%5D.ttf"
+file = "packages/halo_ui/assets/fonts/BricolageGrotesque-Variable.ttf"
+sha256 = "413e7357809ddd12fd80a96a8a396de0e401638d4acd3cb3e37532f0472ac682"
+license = "OFL-1.1"
+license_file = "packages/halo_ui/assets/licenses/OFL-BricolageGrotesque.txt"
+copyright = "2022 The Bricolage Grotesque Project Authors"
+
+[[font]]
+name = "DM Mono Regular"
+use = "Labels, counts, times"
+source = "https://github.com/google/fonts/blob/main/ofl/dmmono/DMMono-Regular.ttf"
+file = "packages/halo_ui/assets/fonts/DMMono-Regular.ttf"
+sha256 = "55b4c98f123daebb3ed27947ba47b2af00554fc6284d639a540bcef5e6258ad2"
+license = "OFL-1.1"
+license_file = "packages/halo_ui/assets/licenses/OFL-DMMono.txt"
+copyright = "2020 The DM Mono Project Authors"
+
+[[font]]
+name = "DM Mono Medium"
+use = "Labels, counts, times"
+source = "https://github.com/google/fonts/blob/main/ofl/dmmono/DMMono-Medium.ttf"
+file = "packages/halo_ui/assets/fonts/DMMono-Medium.ttf"
+sha256 = "fd327daf461db87b44a87def475d251bf03b997f7c07d9680592d75dbbfaad0b"
+license = "OFL-1.1"
+license_file = "packages/halo_ui/assets/licenses/OFL-DMMono.txt"
+copyright = "2020 The DM Mono Project Authors"
