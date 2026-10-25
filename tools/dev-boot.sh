@@ -9,7 +9,8 @@
 #   tools/dev-boot.sh rootfs   build haloinit, the embedder and the EROFS image
 #   tools/dev-boot.sh test     boot headless; expects a boot from the EROFS image
 #   tools/dev-boot.sh shot     boot with a display, save ~/halo-out/screenshot.png
-#   tools/dev-boot.sh vnc      boot with a display on VNC: open vnc://localhost:5900
+#   tools/dev-boot.sh vnc      boot with a display on VNC (localhost:5900; macOS Screen Sharing
+#                              refuses localhost, so on a Mac prefer tools/run-on-mac.sh)
 #   tools/dev-boot.sh run      boot on the serial console (Ctrl-A X quits QEMU)
 #
 # The shell bundle comes from the host: run `flutter build bundle` in shell/

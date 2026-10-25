@@ -102,8 +102,16 @@ tools/dev-boot.sh sysroot    # glibc 2.43 from source, the pinned Flutter engine
 tools/dev-boot.sh initrd     # halo-initramfs
 tools/dev-boot.sh rootfs     # haloinit, the embedder, glibc, engine and shell in an EROFS image
 tools/dev-boot.sh test       # headless: expects to boot from the EROFS image
-tools/dev-boot.sh vnc        # boot with a display; open vnc://localhost:5900 on the Mac
 ```
+
+To use it, run it in a native window on the Mac (needs `brew install qemu`; uses Apple's hypervisor):
+
+```sh
+tools/run-on-mac.sh           # copies the image out of the VM, opens a window; click and drag as touch
+tools/run-on-mac.sh --no-copy # run the copy from last time
+```
+
+`tools/dev-boot.sh vnc` also works, but macOS Screen Sharing refuses to connect to the Mac it runs on (`localhost` counts), so it needs another VNC client.
 
 What runs: the kernel starts `halo-initramfs`, which mounts the EROFS image and switches root. `haloinit` (PID 1) mounts `/tmp` and `/run` and starts `halo-fbdev-embedder`, which runs the shell on the engine's software renderer and draws into the virtio-gpu framebuffer. Touch comes from the virtio tablet through evdev. QEMU uses KVM when the VM has `/dev/kvm` (`nestedVirtualization` in `build/lima/halo-builder.yaml`, Apple M3 or later), else TCG.
 

@@ -98,7 +98,8 @@ limactl shell halo-builder
 # On the host first: (cd shell && flutter build bundle --debug --dart-define=HALO_BACKEND=mock)
 tools/dev-boot.sh kernel && tools/dev-boot.sh sysroot && tools/dev-boot.sh initrd && tools/dev-boot.sh rootfs
 tools/dev-boot.sh test    # PASS: booted from the EROFS image
-tools/dev-boot.sh vnc     # boot with a display; then open vnc://localhost:5900 on the Mac and click
+tools/run-on-mac.sh       # on the Mac, not in the VM: copy the image out and run it in a native window (brew install qemu)
+tools/dev-boot.sh vnc     # alternative: VNC on localhost:5900 (macOS Screen Sharing refuses localhost; use another client)
 SHOT_ACTIONS="wait:3;shot:lock" tools/dev-boot.sh shot   # drive it with touch, screenshots in ~/halo-out/shots
 ```
 
