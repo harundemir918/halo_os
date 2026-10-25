@@ -15,6 +15,14 @@ abstract final class HaloRadii {
     bottomRight: Radius.circular(4),
     bottomLeft: Radius.circular(4),
   );
+
+  /// Selected segment.
+  static const BorderRadius notchSM = BorderRadius.only(
+    topLeft: Radius.circular(16),
+    topRight: Radius.circular(4),
+    bottomRight: Radius.circular(4),
+    bottomLeft: Radius.circular(4),
+  );
   static const BorderRadius notchM = BorderRadius.only(
     topLeft: Radius.circular(18),
     topRight: Radius.circular(4),
@@ -45,7 +53,12 @@ abstract final class HaloRadii {
     bottomRight: Radius.circular(6),
     bottomLeft: Radius.circular(6),
   );
-  static const BorderRadius flat = BorderRadius.all(Radius.circular(5));
+
+  /// Plain rows and toggle rows.
+  static const BorderRadius flat = BorderRadius.all(Radius.circular(6));
+
+  /// Unselected segments.
+  static const BorderRadius flatS = BorderRadius.all(Radius.circular(4));
   static const BorderRadius knob = BorderRadius.all(Radius.circular(2));
 }
 

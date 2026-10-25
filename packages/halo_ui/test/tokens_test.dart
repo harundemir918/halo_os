@@ -20,8 +20,11 @@ void main() {
       HaloColors.line08: 0.08,
       HaloColors.line10: 0.10,
       HaloColors.line12: 0.12,
+      HaloColors.line14: 0.14,
       HaloColors.line16: 0.16,
+      HaloColors.line18: 0.18,
       HaloColors.line22: 0.22,
+      HaloColors.line35: 0.35,
     };
     steps.forEach((color, alpha) {
       expect(color.withValues(alpha: 1), const Color(0xFFFFFFFF));

@@ -39,8 +39,11 @@ The design language sheet (`language.png`) states three refusals and four rules.
 | `line08` | `rgba(255,255,255,0.08)` | Card and slat borders |
 | `line10` | `rgba(255,255,255,0.10)` | Row dividers, battery bar track, lock card borders |
 | `line12` | `rgba(255,255,255,0.12)` | App circle borders |
+| `line14` | `rgba(255,255,255,0.14)` | Media strip progress track |
 | `line16` | `rgba(255,255,255,0.16)` | Arc guide ring (Home) |
+| `line18` | `rgba(255,255,255,0.18)` | Slider track |
 | `line22` | `rgba(255,255,255,0.22)` | Outline (secondary) button borders |
+| `line35` | `rgba(255,255,255,0.35)` | Off switch track border |
 
 Rules:
 - Volt is used once per area with one meaning. If something is not on, active, current or primary, it must not be Volt.
@@ -65,10 +68,14 @@ Two families, both SIL OFL, so they can be bundled in the system image:
 | `sectionTitle` | Bricolage | 24 | 700 | -0.03em | System rows "Connections", "Display" |
 | `title` | Bricolage | 17–19 | 700 | -0.02em | Agenda rows, toggle row names |
 | `body` | Bricolage | 15–16 | 500 | -0.01em, line-height 1.3–1.5 | Notification text, lock previews |
-| `button` | Bricolage | 15–16 | 600–700 | 0 | Navigate, Open notes, Start |
+| `rowTitle` | Bricolage | 16 | 600 | 0 | Toggle row names |
+| `button` | Bricolage | 15 | 700 (secondary 500) | 0 | Navigate, Open notes, Start. Small buttons: 13 |
 | `label` | DM Mono | 11 | 400–500 | 0.08–0.16em, UPPERCASE | NOW, TODAY, ROOM 3, MAPS |
 | `labelSmall` | DM Mono | 10–10.5 | 400 | 0.08–0.1em, UPPERCASE | Dial captions, tick legends |
 | `monoValue` | DM Mono | 12–14 | 500 | 0.06em | Times "10:00", counts, status bar |
+| `kicker` | DM Mono | 11 | 400 | 0.14em, UPPERCASE | NOW, TODAY |
+| `caption` | DM Mono | 10.5 | 400 | 0.08em, UPPERCASE | Toggle row sub-labels (HOME-5G) |
+| `segment` | DM Mono | 12 | 400 (selected 500) | 0.1em, UPPERCASE | Segmented options |
 
 Rules:
 - Times, counts, percentages and units are set in DM Mono.
@@ -85,12 +92,14 @@ Blocks have a **large top-left radius** and small radii on the other three corne
 |---|---|---|
 | `notchXS` | 10 / 3 / 3 / 3 | Tiny chips |
 | `notchS` | 12 / 4 / 4 / 4 | Small buttons ("Yes", "Later") |
+| `notchSM` | 16 / 4 / 4 / 4 | Selected segment |
 | `notchM` | 18 / 4 / 4 / 4 | Buttons, inputs, avatar |
 | `notchML` | 20 / 6 / 6 / 6 | Lock time tile, lock shortcut squares |
 | `notchL` | 22–26 / 4–6 | Medium cards |
 | `notchXL` | 28 / 6 / 6 / 6 | Large cards, dial plates, Recents slats, Stream summary |
 | `notchXXL` | 30–34 / 6 / 6 / 6 | Hero blocks |
-| `radiusFlat` | 4–6 (all corners) | Plain rows, toggle rows, segmented options |
+| `radiusFlat` | 6 (all corners) | Plain rows, toggle rows |
+| `radiusFlatS` | 4 (all corners) | Unselected segments, switch track |
 | `radiusKnob` | 2 | Switch knobs, battery cells |
 
 **Circles are for apps only.** App icons are 52 × 52 circles (radius 26) with a `line12` border on `surface`. The focused app grows (to about 68) and fills with Volt. Nothing else is round, except for status dots (8–9 px), the dials, and the lock "hold to open" ring.
@@ -109,19 +118,19 @@ Blocks have a **large top-left radius** and small radii on the other three corne
 
 | Component | Spec |
 |---|---|
-| **Switch** | 44 × 24 track, radius 4. **On**: Volt track with a 16 × 16 carbon square knob (radius 2) on the right. **Off**: transparent track with a `line22` border and an ash square knob on the left. |
-| **Toggle row** | `surface` row, radius 6, height about 52, `line08` border. When on, a 3 px Volt bar runs down the left edge. Title in Bricolage 700, sub-label in DM Mono ash (`HOME-5G`, `2 DEVICES`, `WORK · UNTIL 11:00`). |
+| **Switch** | 44 × 24 track, radius 4. **On**: Volt track with a 16 × 16 carbon square knob (radius 2) on the right. **Off**: transparent track with a `line35` border and an ash square knob on the left. |
+| **Toggle row** | `surface` row, radius 6, height about 52, `line08` border. When on, a 3 px Volt bar runs down the left edge. Title in Bricolage 600 (`rowTitle`, 16), sub-label in DM Mono ash (`HOME-5G`, `2 DEVICES`, `WORK · UNTIL 11:00`). |
 | **Ring dial** | Plate is `surface` with `notchXL`, 132 × 200 per half. A tick ring of short `line` ticks surrounds a track ring and a value arc. Volt means auto/active. Bone means a manual level. The value sits in the center in `dialValue` with a mono caption under it (`LIGHT`, `SOUND`), and a mono footer below (`AUTO · ON`, `MEDIA · RING`). The user drags around the ring to set the value. |
 | **Slat** | Tall vertical card, `surface`, `notchXL`, `line08` border. Collapsed slats are 36 wide with the icon at the top and a rotated mono label. The focused slat expands and shows the app's live content with a `voltLine` border. Flick up to close. |
-| **Segmented control** | Equal options, height about 40, radius 4. Selected: Volt fill with carbon mono text and `notchM`. Others: `line22` outline. |
-| **Slider** | 2 px track. Volt fill up to the value, `line10` after it. Knob is a Volt rounded rectangle about 14 × 20, radius 4. Value in mono on the right of the label row. |
-| **Primary button** | Volt fill, carbon text, `notchM`, height about 44. |
+| **Segmented control** | Equal options, height about 40, radius 4. Selected: Volt fill with carbon mono text and `notchSM`. Others: `line22` outline. |
+| **Slider** | 2 px track. Volt fill up to the value, `line18` after it. Knob is a Volt rounded rectangle 14 × 20, radius 3. Value in mono on the right of the label row. |
+| **Primary button** | Volt fill, carbon text, `notchM`, height 44, 20 px side padding. The small inline buttons ("Yes" in bone, "Later" outlined) are 32 high, `notchS`, 13 px. |
 | **Secondary button** | Transparent, `line22` border, bone text, `notchM`. |
 | **Command field** | `surface`, `notchM`, `line10` border. A Volt `>` prompt and a mono placeholder ("find a setting") with a solid Volt block cursor. |
 | **Time tile + event card** | Volt square tile (`notchML`) with the time in carbon mono, next to a `surface` card that has a mono kicker (`NEXT · IN 19 MIN`) and a Bricolage title. |
 | **Inline action card** | `surface`, `notchM` or `notchL`. Flare dot, mono sender and age, Bricolage question, plus small "Yes" (bone fill) and "Later" (outline) buttons. |
 | **Timeline item** | 1 px `line10` spine on the left. Node is a 9 px dot: Volt for current, Flare for alert, a hollow 1.5 px ash ring for read. Mono kicker (`MESSAGES · ELIF`) with the time on the right, body below. Text actions (`REPLY` in Volt, `LATER` in ash) are underlined with a 1.5 px bar. |
-| **Battery cells** | 11 segments with 4 px gaps, radius 2. Volt when filled, `surface` when empty. Partial fill is allowed on the boundary cell. |
+| **Battery cells** | 10 segments, 14 high, with 4 px gaps, radius 2. Volt when filled, `line12` when empty. Partial fill is allowed on the boundary cell. |
 | **Media strip** | Volt notch square play/pause button with a `surface` card holding the title, mono artist and a 3 px progress bar (bone on `line10`). |
 | **Section kicker** | 8 × 8 Volt square followed by a mono label (`NOW`, `COLOR`, `MESSAGES`). |
 

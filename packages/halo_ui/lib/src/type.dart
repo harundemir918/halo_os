@@ -51,12 +51,30 @@ abstract final class HaloType {
   static final TextStyle sectionTitle = _voice(24, 700, -0.03);
   static final TextStyle title = _voice(19, 700, -0.02);
   static final TextStyle body = _voice(16, 500, -0.01, height: 1.3);
-  static final TextStyle button = _voice(16, 700, 0);
+  static final TextStyle rowTitle = _voice(16, 600, 0);
+
+  /// Primary button label; [buttonLight] is the secondary button.
+  static final TextStyle button = _voice(15, 700, 0);
+  static final TextStyle buttonLight = _voice(15, 500, 0);
+
+  /// Small inline buttons ("Yes", "Later").
+  static final TextStyle buttonSmall = _voice(13, 700, 0);
+  static final TextStyle buttonSmallLight = _voice(13, 500, 0);
 
   // Mono: DM Mono. Positive tracking, UPPERCASE for labels.
   static final TextStyle label = _mono(11, 500, 0.12);
   static final TextStyle labelSmall = _mono(10.5, 400, 0.09);
   static final TextStyle monoValue = _mono(13, 500, 0.06);
+
+  /// Section kicker (`NOW`) and list-section labels (`TODAY`).
+  static final TextStyle kicker = _mono(11, 400, 0.14);
+
+  /// Sub-label under a row title (`HOME-5G`).
+  static final TextStyle caption = _mono(10.5, 400, 0.08);
+
+  /// Segmented control option; [segmentSelected] for the chosen one.
+  static final TextStyle segment = _mono(12, 400, 0.1);
+  static final TextStyle segmentSelected = _mono(12, 500, 0.1);
 
   /// Mono labels are uppercase by design.
   static String upper(String s) => s.toUpperCase();

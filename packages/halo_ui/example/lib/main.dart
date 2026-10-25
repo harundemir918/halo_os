@@ -109,43 +109,7 @@ class Gallery extends StatelessWidget {
                   ),
               ],
             ),
-            _section('Volt = on · Flare = unread'),
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: HaloSpace.g18,
-                    vertical: HaloSpace.g14,
-                  ),
-                  decoration: const ShapeDecoration(
-                    color: HaloColors.volt,
-                    shape: NotchBorder(radius: HaloRadii.notchM),
-                  ),
-                  child: Text(
-                    'Navigate',
-                    style: HaloType.button.copyWith(color: HaloColors.carbon),
-                  ),
-                ),
-                const SizedBox(width: HaloSpace.g12),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: HaloSpace.g18,
-                    vertical: HaloSpace.g14,
-                  ),
-                  decoration: const ShapeDecoration(
-                    shape: NotchBorder(
-                      radius: HaloRadii.notchM,
-                      side: BorderSide(color: HaloColors.line22),
-                    ),
-                  ),
-                  child: Text('Later', style: HaloType.button),
-                ),
-                const SizedBox(width: HaloSpace.g12),
-                const _Dot(HaloColors.flare),
-                const SizedBox(width: HaloSpace.g8),
-                Text('UNREAD', style: HaloType.label),
-              ],
-            ),
+            const _WidgetsDemo(),
           ],
         ),
       ),
@@ -181,14 +145,110 @@ class Gallery extends StatelessWidget {
   );
 }
 
-class _Dot extends StatelessWidget {
-  const _Dot(this.color);
-  final Color color;
+class _WidgetsDemo extends StatefulWidget {
+  const _WidgetsDemo();
 
   @override
-  Widget build(BuildContext context) => Container(
-    width: 9,
-    height: 9,
-    decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-  );
+  State<_WidgetsDemo> createState() => _WidgetsDemoState();
+}
+
+class _WidgetsDemoState extends State<_WidgetsDemo> {
+  bool wifi = true;
+  bool bluetooth = true;
+  bool airplane = false;
+  String appearance = 'dark';
+  double textSize = 0.46;
+
+  @override
+  Widget build(BuildContext context) {
+    final tokens = HaloTokens.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Gallery._section('Kicker · Buttons'),
+        const HaloKicker('Now'),
+        const SizedBox(height: HaloSpace.g12),
+        Wrap(
+          spacing: HaloSpace.g8,
+          runSpacing: HaloSpace.g8,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            HaloButton(label: 'Navigate', onPressed: () {}),
+            HaloButton(
+              label: 'Open notes',
+              variant: HaloButtonVariant.secondary,
+              onPressed: () {},
+            ),
+            HaloButton(
+              label: 'Yes',
+              variant: HaloButtonVariant.bone,
+              size: HaloButtonSize.small,
+              onPressed: () {},
+            ),
+            HaloButton(
+              label: 'Later',
+              variant: HaloButtonVariant.secondary,
+              size: HaloButtonSize.small,
+              onPressed: () {},
+            ),
+          ],
+        ),
+        Gallery._section('Toggle rows'),
+        HaloToggleRow(
+          title: 'Wi-Fi',
+          subtitle: 'Home-5G',
+          value: wifi,
+          onChanged: (v) => setState(() => wifi = v),
+        ),
+        const SizedBox(height: HaloSpace.g6),
+        HaloToggleRow(
+          title: 'Bluetooth',
+          subtitle: '2 devices',
+          value: bluetooth,
+          onChanged: (v) => setState(() => bluetooth = v),
+        ),
+        const SizedBox(height: HaloSpace.g6),
+        HaloToggleRow(
+          title: 'Airplane',
+          subtitle: 'Off',
+          value: airplane,
+          onChanged: (v) => setState(() => airplane = v),
+        ),
+        Gallery._section('Segmented · Slider'),
+        HaloSegmented<String>(
+          value: appearance,
+          onChanged: (v) => setState(() => appearance = v),
+          options: const [
+            HaloSegment('dark', 'Dark'),
+            HaloSegment('light', 'Light'),
+            HaloSegment('auto', 'Auto'),
+          ],
+        ),
+        const SizedBox(height: HaloSpace.g18),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              HaloType.upper('Text size'),
+              style: HaloType.label.copyWith(color: tokens.ash),
+            ),
+            Text(
+              '${(12 + textSize * 8).round()}',
+              style: HaloType.label.copyWith(color: HaloColors.bone),
+            ),
+          ],
+        ),
+        const SizedBox(height: HaloSpace.g12),
+        HaloSlider(
+          value: textSize,
+          onChanged: (v) => setState(() => textSize = v),
+          semanticLabel: 'Text size',
+        ),
+        Gallery._section('Battery'),
+        const HaloBatteryLine(fraction: 0.82),
+        const SizedBox(height: HaloSpace.g12),
+        const HaloBatteryCells(fraction: 0.82),
+      ],
+    );
+  }
 }
