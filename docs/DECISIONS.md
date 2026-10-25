@@ -44,8 +44,9 @@ BlueZ and ModemManager both want D-Bus. Options: a private dbus-broker behind a 
 ## D-012 · Halo intelligence (summaries, Ask Halo). **Open**
 On-device model versus opt-in cloud, the privacy model and the hardware requirements. The design depends on it (Stream summary card, Home "NOW"), so a rule-based fallback must exist.
 
-## D-013 · Light appearance. **Open**
-System offers Dark / Light / Auto, but only dark is designed. A light palette is needed before Auto/Light can ship.
+## D-013 · Light appearance. **Decided** (2026-10-26): palette and components; **Open**: what `Auto` follows
+The owner supplied the light designs (`design/source/*Light.dc.html`, `design/screens/*_light.png`). Same layout and shapes with swapped tokens: Volt splits into fill (with an ink edge), Moss for lines and Olive for text; switches invert; hairlines become ink at role-dependent alphas. The full map is DESIGN_SYSTEM §2b.
+*Still open:* what `Auto` follows. Options: the system's brightness on a desktop; on the device, time of day (sunrise and sunset from `halo-time`/`halo-location`) or the ambient light sensor. Until decided, Auto means dark on the device and the platform setting on a desktop.
 
 ## D-014 · Build host: Debian 13 (host tools only). **Decided** (2026-10-25)
 Kernel, rootfs and image builds run on Debian 13 (trixie): in a Lima VM on macOS (`build/lima/halo-builder.yaml`) or in the container (`build/container/Containerfile`). It provides host tools only. No Debian package or file ends up in the target image, so D-001 holds. To do: pin the base image by digest and the apt packages by snapshot date once the container is built.

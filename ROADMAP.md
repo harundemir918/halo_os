@@ -40,6 +40,7 @@ Legend: ☐ to do · ◐ in progress · ☑ done
 - ☑ Screens: Lock, Home Arc, Recents, Switchboard, Stream, System (`shell/`). System: only Display has designed contents; the other sections say "not designed yet"
 - ☑ Navigation and gestures: hold-to-open, the arc's drag/focus/launch, slat focus and flick-to-close, shell edge swipes (the proposal in the open questions: top right Switchboard, top left Stream, bottom up Home then Recents). System has no gesture yet (`--dart-define=HALO_START=system`)
 - ◐ Golden tests at 390 × 844 @2x: every screen has one (`shell/test/goldens/`), rendered on macOS and compared with `design/screens/*.png` by eye, not by pixel diff. CI skips them (`--exclude-tags golden`)
+- ☐ Light appearance: a palette in `halo_ui`, every widget reading it (about 190 `HaloColors` uses in 35 files), light goldens against `design/screens/*_light.png`, the theme chosen from System > Appearance
 - ☐ Accessibility pass: semantics labels, text scaling (System → Text size), reduce motion
 
 **Exit:** all six screens match the designs in golden tests, and the shell is fully navigable on macOS desktop with mock data.
@@ -125,7 +126,7 @@ Legend: ☐ to do · ◐ in progress · ☑ done
 
 ## Open questions
 - **Shell gestures:** the designs show the screens but not how to reach them. Proposal: swipe up from the bottom edge for Home, swipe up and hold for Recents, swipe down from the top right for Switchboard, swipe down from the top left for Stream. The arc scrolls horizontally to focus an app, and a tap launches it.
-- **Light appearance:** System offers Light and Auto, but there is no light palette yet (D-013).
+- **Light appearance:** designed (DESIGN_SYSTEM §2b, D-013) but not built; `Auto` has no rule yet.
 - **Motion spec:** none exists. DESIGN_SYSTEM §8 has interim rules.
 - **Arc with more than 7 apps:** scroll along the arc? An "all apps" view that respects "no grid"?
 - **Web engine** for the Web app.

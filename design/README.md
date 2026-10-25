@@ -15,4 +15,18 @@ Screen files:
 | `Settings.dc.html` | System | 390 x 844 |
 | `Language.dc.html` | Design language sheet | 1280 x 520 |
 
+Light appearance (D-013): the same screens with swapped tokens.
+
+| File | Screen |
+|---|---|
+| `MainLight.dc.html` | Lock |
+| `HomeLight.dc.html` | Home Arc |
+| `SwitcherLight.dc.html` | Recents |
+| `ControlLight.dc.html` | Switchboard |
+| `NotificationsLight.dc.html` | Stream |
+| `SettingsLight.dc.html` | System |
+| `Themes.dc.html` | Dark and light token sheet (1280 x 520) |
+
+PNGs: `lock_light.png`, `home_light.png`, `recents_light.png`, `switchboard_light.png`, `stream_light.png`, `system_light.png`, `dark_and_light_tokens.png`.
+
 Export names to use for the PNGs: `lock.png`, `home.png`, `recents.png`, `switchboard.png`, `stream.png`, `system.png`, `language.png`.

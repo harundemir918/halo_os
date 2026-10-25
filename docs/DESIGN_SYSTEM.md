@@ -49,7 +49,70 @@ Rules:
 - Volt is used once per area with one meaning. If something is not on, active, current or primary, it must not be Volt.
 - Flare is never decoration. It always stands for an unread or alert state.
 - Text on Volt is always `carbon`.
-- There is only a dark appearance in the designs. System offers Dark / Light / Auto, but no light palette has been designed yet. See [ROADMAP](../ROADMAP.md) open questions.
+- Dark is the default appearance. A light appearance is designed too: see §2b. How `Auto` chooses is still open (D-013).
+
+## 2b. Light appearance
+
+Source: `design/source/*Light.dc.html`, `design/source/Themes.dc.html` and `design/screens/*_light.png` (decided in D-013). The sheet's own summary: **same layout, same shapes, swapped tokens**, and still no blur, gradients or shadows. The light sources are the exact numbers; this section is the map.
+
+**Tokens**
+
+| Role | Dark | Light |
+|---|---|---|
+| `ground` (was `carbon`) | `#0C0C0B` | `#F3F1E9` |
+| `surface` | `#181816` | `#FBFAF5` |
+| `well` (Recents focused slat) | `#121211` | `#EBE8DC` |
+| `text` (was `bone`) | `#F2F0E8` | `#14140F` (ink) |
+| `textDim` (was `boneDim`) | `#D8D6CC` | `#3D3C35` |
+| `muted` (was `ash`) | `#A09E94` | `#6A685D` |
+| `signalFill` (Volt) | `#D6FF3F` | `#D6FF3F` **plus a 1 px ink edge** |
+| `signalLine` | `#D6FF3F` | `#5F8A00` (Moss) |
+| `signalText` | `#D6FF3F` | `#4A6700` (Olive) |
+| `flare` | `#FF5B2E` | `#E8481A` |
+| text on a signal fill | `#0C0C0B` | `#14140F` |
+
+**Signal splits in three.** In dark one color (Volt) does every job. In light, Volt is too bright to read on paper, so it stays only as a *fill* (with an ink edge), lines and strokes use Moss, and text uses Olive. "Volt means on, active or yours" still holds as a meaning; the three tokens are how it is drawn.
+
+**Hairlines are ink at an alpha, and the alpha depends on the role**, not on one step per token. As measured in the sources:
+
+| Role | Dark (white) | Light (ink `#14140F`) |
+|---|---|---|
+| Card, slat and toggle-row borders | 0.08 | 0.12 |
+| Row dividers and rules | 0.10 | 0.12 |
+| Battery-line track, dial track | 0.10 | 0.10 |
+| Shortcut squares, command field | 0.10 | 0.14 |
+| App circle borders | 0.12 | 0.16 |
+| Outline buttons, avatar, Ask Halo, unselected segments | 0.22 / 0.20 | 0.30 |
+| Off-switch border | 0.35 | 0.40 |
+| Dial ticks | 0.20 | 0.28 |
+| Empty battery cells | 0.12 | 0.12 |
+| Media progress track | 0.14 | 0.14 |
+| Slider track | 0.18 | 0.20 |
+| Home arc guide ring | 0.16 | 0.18 |
+| Home background rings | 0.05 | 0.07 |
+| Lock background rings | 0.07 | 0.09 |
+| Lock hold-ring track | 0.16 | 0.16 |
+
+**Components that change shape or role, not just color**
+
+| Component | Light |
+|---|---|
+| Volt fills: Lock time tile, primary button, selected segment, play button, Stream summary card, Maps "Start" | Volt fill, 1 px ink edge, ink text. The focused Home app has a 1.5 px edge. |
+| Switch | Inverts. **On** is an ink track with a Volt knob; **off** is a 0.40 ink outline with a muted knob. |
+| Slider | Ink fill; the knob is Volt with a 1 px ink edge. |
+| Ring dial | Auto arc is Moss, manual arc is ink. |
+| Media strip | Pause and play glyph ink; progress fill ink. |
+| Battery line and cells, toggle-row left bar, Lock/Home arc segment, hold-ring arc, route line, timeline "current" dot, kicker square | Moss (`signalLine`). |
+| Kicker label, agenda current time, REPLY (and its underline), accordion number and `OPEN`, command prompt | Olive (`signalText`). |
+| `4 NEW` chip | Ink fill, Volt text. |
+| Inline "Yes" button | Ink fill, ground text. |
+| Hold-ring center dot | Ink. |
+| Recents focused slat | 2 px ink border on the `well` fill. |
+| Accordion open row | 2 px ink top rule. |
+| Unread badge ring (on the focused app) | Ground color. |
+| Maps destination pin | Flare with a ground-colored center. |
+
+Flare is unchanged in meaning (unread or alert) and only shifts to `#E8481A`.
 
 ## 3. Typography
 
