@@ -32,7 +32,7 @@ Legend: ☐ to do · ◐ in progress · ☑ done
 **Exit:** QEMU boots to a Flutter frame in under 3 s from kernel start, touch input works, and the image contains only what our recipes built.
 
 ## Phase 2: Shell UI (desktop, mock data)
-- ◐ `packages/halo_ui`: tokens (colors ☑, type ☑, notch radii ☑, spacing ☐), bundled fonts ☑, `NotchBorder` ☑
+- ☑ `packages/halo_ui`: tokens (colors, type, notch radii, spacing), bundled fonts, `NotchBorder`, `HaloTheme`
 - ☐ Widgets: Switch, ToggleRow, Dial, Slat, Segmented, Slider, Buttons, CommandField, Timeline, BatteryLine, BatteryCells, Arc, Kicker
 - ☐ `packages/halo_sdk` API surface plus the **mock** backend (fixtures matching the design copy: Elif, Design review, Room 3…)
 - ☐ Screens: Lock, Home Arc, Recents, Switchboard, Stream, System
