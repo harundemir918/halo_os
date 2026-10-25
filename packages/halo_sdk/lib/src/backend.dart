@@ -9,8 +9,14 @@ abstract interface class HaloBackend {
 
   DeviceStatus get status;
 
+  /// Today's events in time order.
+  List<CalendarEvent> get agenda;
+
   /// The next calendar event today, if any.
   CalendarEvent? get nextEvent;
+
+  /// Installed apps in arc order, left to right.
+  List<HaloAppInfo> get apps;
 
   /// Notifications, newest first.
   List<HaloNotification> get notifications;

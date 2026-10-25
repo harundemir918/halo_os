@@ -33,6 +33,20 @@ abstract final class HaloFormat {
   /// `10:00`
   static String clock(DateTime t) => '${hours(t)}:${minutes(t)}';
 
+  static const _weekdayShort = [
+    'MON',
+    'TUE',
+    'WED',
+    'THU',
+    'FRI',
+    'SAT',
+    'SUN',
+  ];
+
+  /// `FRI 23.10` (the status row date).
+  static String statusDate(DateTime t) =>
+      '${_weekdayShort[t.weekday - 1]} ${two(t.day)}.${two(t.month)}';
+
   /// `FRIDAY — 23 OCTOBER` (the Lock date line).
   static String lockDate(DateTime t) =>
       '${_weekdays[t.weekday - 1]} — ${t.day} ${_months[t.month - 1]}'

@@ -17,11 +17,21 @@ class CalendarEvent {
     required this.start,
     required this.title,
     required this.location,
+    this.walkMinutes,
+    this.attendees,
   });
 
   final DateTime start;
   final String title;
+
+  /// Where it is, or a status shown in the same slot (`Unconfirmed`).
   final String location;
+
+  /// Walking time to the venue, when known.
+  final int? walkMinutes;
+
+  /// Number of people, when known.
+  final int? attendees;
 
   /// Whole minutes from [now] until the event starts, never negative.
   int minutesUntil(DateTime now) {
@@ -39,6 +49,7 @@ class HaloNotification {
     required this.body,
     required this.receivedAt,
     required this.unread,
+    this.actionPrompt,
   });
 
   final String id;
@@ -52,6 +63,9 @@ class HaloNotification {
   final DateTime receivedAt;
   final bool unread;
 
+  /// Short question Halo offers to answer from Home (`Still on for 7?`).
+  final String? actionPrompt;
+
   /// Compact age as the designs show it: `2M`, `1H`, `3D`.
   String age(DateTime now) {
     final d = now.difference(receivedAt);
@@ -59,4 +73,13 @@ class HaloNotification {
     if (d.inHours < 24) return '${d.inHours}H';
     return '${d.inDays}D';
   }
+}
+
+/// An installed app, in arc order.
+class HaloAppInfo {
+  const HaloAppInfo({required this.id, required this.label});
+
+  /// Stable id (`messages`).
+  final String id;
+  final String label;
 }

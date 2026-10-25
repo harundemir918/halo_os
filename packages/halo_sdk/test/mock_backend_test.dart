@@ -18,6 +18,44 @@ void main() {
     expect(e.minutesUntil(backend.now), 19);
   });
 
+  test('agenda matches the Home design', () {
+    final a = backend.agenda;
+    expect(a.map((e) => e.title), [
+      'Design review',
+      'Lunch with Elif',
+      'Dinner, corner table',
+    ]);
+    expect(a.map((e) => e.location), ['Room 3', 'Karaköy', 'Unconfirmed']);
+    expect(a.first.walkMinutes, 2);
+    expect(a.first.attendees, 4);
+  });
+
+  test('next event skips events that already started', () {
+    final lunchTime = MockBackend(now: DateTime(2026, 10, 23, 12));
+    expect(lunchTime.nextEvent!.title, 'Lunch with Elif');
+    final late = MockBackend(now: DateTime(2026, 10, 23, 23));
+    expect(late.nextEvent, isNull);
+  });
+
+  test('apps are in arc order with Messages in the middle', () {
+    final ids = backend.apps.map((a) => a.id).toList();
+    expect(ids, [
+      'notes',
+      'maps',
+      'music',
+      'messages',
+      'camera',
+      'web',
+      'phone',
+    ]);
+    expect(ids[ids.length ~/ 2], 'messages');
+  });
+
+  test('Elif has an action prompt', () {
+    expect(backend.notifications.first.actionPrompt, 'Still on for 7?');
+    expect(backend.notifications.last.actionPrompt, isNull);
+  });
+
   test('minutesUntil never goes negative', () {
     final e = backend.nextEvent!;
     expect(e.minutesUntil(DateTime(2026, 10, 23, 11)), 0);

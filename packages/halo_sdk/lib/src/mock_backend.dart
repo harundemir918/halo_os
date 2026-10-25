@@ -13,12 +13,47 @@ class MockBackend implements HaloBackend {
   DeviceStatus get status =>
       const DeviceStatus(battery: 0.82, network: '5G · WI-FI');
 
+  DateTime _at(int h, int m) => DateTime(now.year, now.month, now.day, h, m);
+
   @override
-  CalendarEvent? get nextEvent => CalendarEvent(
-    start: DateTime(now.year, now.month, now.day, 10),
-    title: 'Design review',
-    location: 'Room 3',
-  );
+  List<CalendarEvent> get agenda => [
+    CalendarEvent(
+      start: _at(10, 0),
+      title: 'Design review',
+      location: 'Room 3',
+      walkMinutes: 2,
+      attendees: 4,
+    ),
+    CalendarEvent(
+      start: _at(13, 30),
+      title: 'Lunch with Elif',
+      location: 'Karaköy',
+    ),
+    CalendarEvent(
+      start: _at(19, 0),
+      title: 'Dinner, corner table',
+      location: 'Unconfirmed',
+    ),
+  ];
+
+  @override
+  CalendarEvent? get nextEvent {
+    for (final e in agenda) {
+      if (!e.start.isBefore(now)) return e;
+    }
+    return null;
+  }
+
+  @override
+  List<HaloAppInfo> get apps => const [
+    HaloAppInfo(id: 'notes', label: 'Notes'),
+    HaloAppInfo(id: 'maps', label: 'Maps'),
+    HaloAppInfo(id: 'music', label: 'Music'),
+    HaloAppInfo(id: 'messages', label: 'Messages'),
+    HaloAppInfo(id: 'camera', label: 'Camera'),
+    HaloAppInfo(id: 'web', label: 'Web'),
+    HaloAppInfo(id: 'phone', label: 'Phone'),
+  ];
 
   @override
   List<HaloNotification> get notifications => [
@@ -29,6 +64,7 @@ class MockBackend implements HaloBackend {
       body: 'Are we still on for 7?',
       receivedAt: now.subtract(const Duration(minutes: 2)),
       unread: true,
+      actionPrompt: 'Still on for 7?',
     ),
     HaloNotification(
       id: 'parcel-1',

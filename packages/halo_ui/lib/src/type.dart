@@ -83,6 +83,21 @@ abstract final class HaloType {
   /// Notification preview body on Lock.
   static final TextStyle preview = _voice(14, 400, 0);
 
+  /// Home headline ("Design review in 19 min"). [headline] is the 38 px one.
+  static final TextStyle headlineL = _voice(42, 800, -0.04, height: 1);
+
+  /// Context line under the Home headline (`ROOM 3 · 2 MIN WALK`).
+  static final TextStyle context = _mono(12, 400, 0.08);
+
+  /// Time in an agenda row (`10:00`).
+  static final TextStyle timeLabel = _mono(12, 400, 0);
+
+  /// Agenda and inline-card titles (`Design review`, `Still on for 7?`).
+  static final TextStyle itemTitle = _voice(17, 600, -0.01);
+
+  /// Small mono metadata with no tracking: ages and row trailers (`2M`, `ROOM 3`).
+  static final TextStyle meta = _mono(11, 400, 0);
+
   /// Section kicker (`NOW`) and list-section labels (`TODAY`).
   static final TextStyle kicker = _mono(11, 400, 0.14);
 

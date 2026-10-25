@@ -53,10 +53,7 @@ class HaloNotificationPreview extends StatelessWidget {
                 const SizedBox(width: 12),
                 Text(
                   HaloType.upper(age),
-                  style: HaloType.status.copyWith(
-                    letterSpacing: 0,
-                    color: HaloColors.ash,
-                  ),
+                  style: HaloType.meta.copyWith(color: HaloColors.ash),
                 ),
               ],
             ),

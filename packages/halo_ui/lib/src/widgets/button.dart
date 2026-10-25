@@ -31,12 +31,16 @@ class HaloButton extends StatelessWidget {
     required this.onPressed,
     this.variant = HaloButtonVariant.primary,
     this.size = HaloButtonSize.regular,
+    this.leading,
   });
 
   final String label;
   final VoidCallback? onPressed;
   final HaloButtonVariant variant;
   final HaloButtonSize size;
+
+  /// Optional widget before the label (Ask Halo's Volt square).
+  final Widget? leading;
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +83,13 @@ class HaloButton extends StatelessWidget {
             // widthFactor keeps the button as wide as its label.
             child: Center(
               widthFactor: 1,
-              child: Text(label, style: style.copyWith(color: textColor)),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (leading != null) ...[leading!, const SizedBox(width: 10)],
+                  Text(label, style: style.copyWith(color: textColor)),
+                ],
+              ),
             ),
           ),
         ),
