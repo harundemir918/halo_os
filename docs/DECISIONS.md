@@ -55,7 +55,7 @@ Kernel, rootfs and image builds run on Debian 13 (trixie): in a Lima VM on macOS
 *Why:* the state is small, the SDK boundary is already an interface with a mock, and a third-party dependency would have to be vetted and pinned for the device image.
 *Revisit if:* the SDK needs fine-grained subscriptions (per-notification streams) or a screen's state becomes hard to follow.
 
-## D-016 · Flutter engine for early bring-up: prebuilt, then from source. **Proposed**, needs the owner (2026-10-25)
+## D-016 · Flutter engine for early bring-up: prebuilt, then from source. **Decided** (2026-10-25): option C
 BUILD.md §2 plans to build the Flutter engine from source (`third_party/flutter-engine`) to match our Clang. That is a very large build (GN, ninja, many GB) and it blocks every Flutter pixel on the device.
 
 **Option A, prebuilt for bring-up.** Pin Google's CI artifact for the SDK we already pin (Flutter 3.47.4, engine `06a2e2a110089dff50fe635cffd2a61e1b24fbcd`) in `third_party/manifest.toml` with its checksum: `linux-arm64/linux-arm64-embedder.zip` (14.8 MB: `libflutter_engine.so` and `flutter_embedder.h`). The `linux-arm64-release` and `-profile` variants exist for AOT. This gets the embedder and the compositor running far sooner.
@@ -66,4 +66,4 @@ BUILD.md §2 plans to build the Flutter engine from source (`third_party/flutter
 
 *Prerequisite for A and B alike:* the engine is dynamically linked, so the image needs a glibc, and that glibc must come from our own recipe, not from the Debian build host (D-001, D-014). The Phase 1 sysroot comes first; then Mesa (EGL/GBM), libdrm and libinput, which the engine and the DRM embedder use.
 
-Until this is decided, `halo-splash` (a PNG blitted to the framebuffer) stands in for the shell.
+Option C was chosen by the owner on 2026-10-25. It is in place: the pinned artifacts are in `third_party/manifest.toml`, `build/recipes/flutter-engine.toml` stages them, and the shell runs on them in QEMU. The sysroot's glibc is built from `build/recipes/glibc.toml`. `halo-splash` (a PNG blitted to the framebuffer) remains only as a fallback.

@@ -84,6 +84,24 @@ void main() {
     expect(find.byType(HomeScreen), findsOneWidget);
   });
 
+  testWidgets(
+    'a swipe whose first step stays under the touch slop still counts',
+    (tester) async {
+      // The same stream the device sends: 12 events of 17.5 px from y=10. The
+      // first stays under the 18 px slop, so the drag is recognized at y=45,
+      // outside the 44 px edge zone. The zone must come from the touch-down.
+      await pumpShell(tester, start: 'home');
+      final g = await tester.startGesture(topRight);
+      for (var i = 0; i < 12; i++) {
+        await g.moveBy(const Offset(0, 17.5));
+        await tester.pump(const Duration(milliseconds: 16));
+      }
+      await g.up();
+      await tester.pumpAndSettle();
+      expect(find.byType(SwitchboardScreen), findsOneWidget);
+    },
+  );
+
   testWidgets('short or wrong-way swipes do nothing', (tester) async {
     await pumpShell(tester, start: 'home');
     await swipe(tester, topRight, const Offset(0, 40)); // too short

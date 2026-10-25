@@ -16,10 +16,25 @@ fn run_as_pid1() {
     use std::process::Command;
     use std::time::Duration;
 
-    const SPLASH: &str = "/sbin/halo-splash";
+    // What to run as the shell, first match wins. The fbdev embedder runs the
+    // Flutter shell; the splash only draws a picture. Both are interim until
+    // the compositor exists (ROADMAP Phase 3).
+    const SHELLS: &[(&str, &[&str])] = &[
+        (
+            "/sbin/halo-fbdev-embedder",
+            &["/system/shell/flutter_assets", "/system/icudtl.dat"],
+        ),
+        ("/sbin/halo-splash", &[]),
+    ];
 
     if let Err(e) = sys::mount("proc", "/proc", "proc", 0) {
         eprintln!("{NAME}: mount /proc failed: {e}");
+    }
+    // The root is read-only, so scratch space is tmpfs.
+    for target in ["/tmp", "/run"] {
+        if let Err(e) = sys::mount("tmpfs", target, "tmpfs", 0) {
+            eprintln!("{NAME}: mount {target} failed: {e}");
+        }
     }
     let cmdline = std::fs::read_to_string("/proc/cmdline").unwrap_or_default();
     println!("{NAME}: cmdline: {}", cmdline.trim());
@@ -33,11 +48,27 @@ fn run_as_pid1() {
         println!("{NAME}: boot ok");
         let e = sys::poweroff();
         eprintln!("{NAME}: poweroff failed: {e}");
-    } else if std::path::Path::new(SPLASH).exists() {
-        // Stands in for the shell until the Flutter embedder exists.
-        match Command::new(SPLASH).spawn() {
-            Ok(child) => println!("{NAME}: started {SPLASH} (pid {})", child.id()),
-            Err(e) => eprintln!("{NAME}: cannot start {SPLASH}: {e}"),
+    } else if let Some((bin, args)) = SHELLS
+        .iter()
+        .find(|(b, _)| std::path::Path::new(b).exists())
+    {
+        // The Dart VM wants a writable HOME and temp directory.
+        match Command::new(bin)
+            .args(*args)
+            .env("HOME", "/tmp")
+            .env("TMPDIR", "/tmp")
+            .env(
+                "HALO_TRACE",
+                if cmdline_has(&cmdline, "halo.trace") {
+                    "1"
+                } else {
+                    ""
+                },
+            )
+            .spawn()
+        {
+            Ok(child) => println!("{NAME}: started {bin} (pid {})", child.id()),
+            Err(e) => eprintln!("{NAME}: cannot start {bin}: {e}"),
         }
     }
 

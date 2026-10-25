@@ -1,0 +1,15 @@
+# The Flutter engine for the embedder, prebuilt (D-016, option C). Replace
+# with a source build before Phase 7.
+name = "flutter-engine"
+source = ["flutter-engine-embedder", "flutter-engine-artifacts"]
+
+[[step]]
+name = "stage"
+run = '''
+dest="$HALO_OUT/engine"
+rm -rf "$dest" && mkdir -p "$dest"
+cp "$SRC_FLUTTER_ENGINE_EMBEDDER/libflutter_engine.so" "$dest/"
+cp "$SRC_FLUTTER_ENGINE_EMBEDDER/flutter_embedder.h" "$dest/"
+cp "$SRC_FLUTTER_ENGINE_ARTIFACTS/icudtl.dat" "$dest/"
+ls -l "$dest"
+'''

@@ -7,7 +7,7 @@ FROM debian:trixie-slim
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        bc bison build-essential ca-certificates cmake cpio curl dosfstools \
+        bc bison build-essential ca-certificates cmake cpio curl dosfstools gawk \
         erofs-utils file flex gdisk git libelf-dev libssl-dev meson ninja-build \
         pkg-config python3 qemu-system-arm qemu-system-x86 qemu-utils rsync \
         unzip xz-utils cryptsetup-bin \

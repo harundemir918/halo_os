@@ -18,18 +18,20 @@ Legend: ☐ to do · ◐ in progress · ☑ done
 **Exit:** a clean checkout runs `cargo test` and `flutter test` (empty but wired) in CI.
 
 ## Phase 1: Boot to pixels (QEMU)
-- ☐ `halo` build driver: fetch, toolchain, recipe runner
-- ☐ Clang + glibc + libc++ sysroot for aarch64
+- ◐ `halo` build driver: fetch, toolchain, recipe runner. Interim: `tools/recipe.py` runs `build/recipes/*.toml` (checksummed fetch, steps, stamps); the Rust driver replaces it
+- ◐ Clang + glibc + libc++ sysroot for aarch64: glibc 2.43 and the kernel headers are built from our recipes into the sysroot (with the build host's gcc, D-007 pending); Clang and libc++ ☐
 - ☑ Kernel config fragments for `qemu-arm64` (virtio-gpu, virtio-input, DRM, EROFS, dm-verity, cgroup2, namespaces, Landlock) (`kernel/configs/qemu-arm64.fragment`; builds and boots on 6.18.58)
 - ◐ `halo-initramfs`: mount ☑, switch_root ☑ (boots an EROFS root on virtio-blk in QEMU); dm-verity and `/data` unlock ☐
 - ◐ `haloinit`: PID 1 runs from the image and powers off on request ☑; TOML units, supervision, reaping, shutdown and reboot ☐
 - ☐ `halo-devd`: uevents, device nodes, firmware loading
-- ☐ Base recipes: libdrm, Mesa (virgl, later freedreno, panfrost, v3d), libinput, libevdev, xkbcommon, freetype, fontconfig
-- ☐ Flutter engine built for the embedder target
-- ◐ Minimal DRM/EGL embedder that shows a Flutter "hello" frame full screen and reacts to touch. Today `halo-splash` blits a static PNG (the Lock golden) to the virtio-gpu framebuffer (`docs/screenshots/qemu-lock.png`); live Flutter waits on D-016 and the sysroot
-- ◐ `./halo run` boots the image in QEMU: `tools/dev-boot.sh run|test|shot` until the driver exists
+- ☐ Base recipes: libdrm, Mesa (virgl, later freedreno, panfrost, v3d), libinput, libevdev, xkbcommon, freetype, fontconfig. Not needed yet: the shell runs on the engine's software renderer and reads evdev directly
+- ◐ Flutter engine for the embedder target: prebuilt and pinned (D-016, decided); a source build comes before Phase 7
+- ◐ Minimal embedder that shows the Flutter shell full screen and reacts to touch: `embedder/halo-fbdev` (C++) runs the engine's software renderer into the framebuffer and feeds it evdev touch. The shell runs on QEMU with all six screens and touch navigation (`docs/screenshots/os-*.png`). DRM/KMS with EGL stays for later
+- ◐ `./halo run` boots the image in QEMU: `tools/dev-boot.sh vnc|run|test|shot` until the driver exists
 
 **Exit:** QEMU boots to a Flutter frame in under 3 s from kernel start, touch input works, and the image contains only what our recipes built.
+
+*Status:* first frame 1.6 s after QEMU starts (KVM, debug engine, software renderer) ☑, touch ☑. "Only our recipes" is not met yet: the engine is a prebuilt exception (D-016) and the toolchain is the host's gcc (D-007), and Clang, the `halo` driver, haloinit units and dm-verity are still open.
 
 ## Phase 2: Shell UI (desktop, mock data)
 - ☑ `packages/halo_ui`: tokens (colors, type, notch radii, spacing), bundled fonts, `NotchBorder`, `HaloTheme`

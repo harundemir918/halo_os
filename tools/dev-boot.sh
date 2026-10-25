@@ -4,11 +4,16 @@
 # boots them in QEMU. Run it inside the build VM: limactl shell halo-builder
 #
 #   tools/dev-boot.sh kernel   fetch, verify and build the kernel
+#   tools/dev-boot.sh sysroot  build glibc and the engine from build/recipes
 #   tools/dev-boot.sh initrd   build halo-initramfs and the initramfs
-#   tools/dev-boot.sh rootfs   build haloinit and the EROFS root image
-#   tools/dev-boot.sh run      boot interactively (Ctrl-A X quits QEMU)
+#   tools/dev-boot.sh rootfs   build haloinit, the embedder and the EROFS image
 #   tools/dev-boot.sh test     boot headless; expects a boot from the EROFS image
-#   tools/dev-boot.sh shot     boot with a display and save screenshot.png
+#   tools/dev-boot.sh shot     boot with a display, save ~/halo-out/screenshot.png
+#   tools/dev-boot.sh vnc      boot with a display on VNC: open vnc://localhost:5900
+#   tools/dev-boot.sh run      boot on the serial console (Ctrl-A X quits QEMU)
+#
+# The shell bundle comes from the host: run `flutter build bundle` in shell/
+# first (it needs the Flutter SDK, which is not in the VM).
 #
 # Output goes to $HALO_OUT (default ~/halo-out), sources to $HALO_SRC.
 set -euo pipefail
@@ -22,7 +27,12 @@ kbuild=$out/kbuild
 image=$kbuild/arch/arm64/boot/Image
 initrd=$out/initramfs.cpio.gz
 rootfs=$out/system.erofs
+sysroot=$out/sysroot
+engine=$out/engine
+embedder=$out/embedder/halo-fbdev-embedder
+assets=$repo/shell/build/flutter_assets
 target=aarch64-unknown-linux-gnu
+display_args=(-device virtio-gpu-pci,xres=390,yres=844 -device virtio-tablet-pci -device virtio-keyboard-pci)
 
 manifest() { # manifest <source-name> <key>
   python3 -I - "$repo/third_party/manifest.toml" "$1" "$2" <<'EOF'
@@ -62,7 +72,12 @@ build_kernel() {
   make -C "$ksrc" O="$kbuild" ARCH=arm64 -j"$(nproc)" Image
 }
 
-# Static glibc binaries: there is no libc in the initramfs or the root yet.
+build_sysroot() {
+  python3 "$repo/tools/recipe.py" glibc
+  python3 "$repo/tools/recipe.py" flutter-engine
+}
+
+# Static glibc binaries: the initramfs has no libc.
 cargo_static() { # cargo_static <package>...
   # shellcheck disable=SC1091
   . "$HOME/.cargo/env"
@@ -82,111 +97,103 @@ build_initrd() {
   ls -l "$initrd"
 }
 
+build_embedder() {
+  [ -f "$engine/flutter_embedder.h" ] || { echo "run: tools/dev-boot.sh sysroot"; exit 1; }
+  mkdir -p "$(dirname "$embedder")"
+  g++ -std=c++17 -O2 -Wall -Wextra -Werror -I "$engine" \
+    "$repo/embedder/halo-fbdev/main.cc" -o "$embedder" \
+    -L "$engine" -lflutter_engine -lpthread \
+    -static-libstdc++ -static-libgcc -Wl,-rpath,/system/lib
+}
+
 build_rootfs() {
+  [ -x "$sysroot/lib/ld-linux-aarch64.so.1" ] || { echo "run: tools/dev-boot.sh sysroot"; exit 1; }
   cargo_static haloinit halo-splash
+  build_embedder
   local stage=$out/rootfs
   rm -rf "$stage"
-  mkdir -p "$stage"/{sbin,system,dev,proc,sys,run,tmp}
+  mkdir -p "$stage"/{sbin,lib,system/lib,system/shell,dev,proc,sys,run,tmp}
   install -m 0755 "$out/target/$target/release/haloinit" "$stage/sbin/haloinit"
   install -m 0755 "$out/target/$target/release/halo-splash" "$stage/sbin/halo-splash"
-  # A frame rendered by the shell's golden test: a static picture, not live Flutter.
+  install -m 0755 "$embedder" "$stage/sbin/halo-fbdev-embedder"
+  # Our own glibc, and only what the engine and the embedder load.
+  for lib in ld-linux-aarch64.so.1 libc.so.6 libm.so.6 libdl.so.2 libpthread.so.0 librt.so.1; do
+    install -m 0755 "$sysroot/lib/$lib" "$stage/lib/$lib"
+  done
+  install -m 0755 "$engine/libflutter_engine.so" "$stage/system/lib/"
+  install -m 0644 "$engine/icudtl.dat" "$stage/system/"
+  # A frame rendered by the shell's golden test, for the splash fallback.
   install -m 0644 "$repo/shell/test/goldens/lock.png" "$stage/system/splash.png"
+  if [ -d "$assets" ]; then
+    cp -r "$assets" "$stage/system/shell/flutter_assets"
+  else
+    echo "note: $assets missing, the image will boot to the splash (run flutter build bundle in shell/)"
+  fi
   # Everything owned by root, fixed timestamps: the image is reproducible.
-  mkfs.erofs --all-root -T0 "$rootfs" "$stage" >/dev/null
+  mkfs.erofs -zlz4 --all-root -T0 "$rootfs" "$stage" >/dev/null
   ls -l "$rootfs"
 }
 
-qemu() { # qemu <extra kernel args>
-  qemu-system-aarch64 -M virt -cpu max -m 1G -smp 2 \
-    -kernel "$image" -initrd "$initrd" \
-    -drive "file=$rootfs,if=none,format=raw,id=root,readonly=on" \
-    -device virtio-blk-device,drive=root \
-    -append "console=ttyAMA0 root=/dev/vda rootfstype=erofs ro $1" \
-    -nographic -no-reboot
+# KVM when the VM offers it (see nestedVirtualization in build/lima), else TCG.
+accel_args() {
+  if [ -w /dev/kvm ]; then
+    echo "-machine virt,gic-version=host -accel kvm -cpu host"
+  else
+    echo "-machine virt -accel tcg -cpu max"
+  fi
 }
 
-# Boot with a virtio-gpu display, wait until halo-splash says it drew, then ask
-# QEMU for a screendump and save it as a PNG.
-screenshot() {
-  local sock=$out/qemu-monitor.sock serial=$out/serial.log
-  local ppm=$out/screen.ppm png=$out/screenshot.png
-  rm -f "$sock" "$serial" "$ppm" "$png"
-  qemu-system-aarch64 -M virt -cpu max -m 1G -smp 2 \
+# qemu_common <serial> <extra kernel args> <qemu args>...
+qemu_common() {
+  local serial=$1 kargs=$2
+  shift 2
+  # shellcheck disable=SC2046
+  qemu-system-aarch64 $(accel_args) -m 2G -smp 4 \
     -kernel "$image" -initrd "$initrd" \
     -drive "file=$rootfs,if=none,format=raw,id=root,readonly=on" \
     -device virtio-blk-device,drive=root \
-    -device virtio-gpu-pci,xres=390,yres=844 \
-    -display none -serial "file:$serial" \
-    -monitor "unix:$sock,server,nowait" \
-    -append "console=ttyAMA0 root=/dev/vda rootfstype=erofs ro vt.global_cursor_default=0" -no-reboot &
+    -serial "$serial" \
+    -append "console=ttyAMA0 root=/dev/vda rootfstype=erofs ro vt.global_cursor_default=0 $kargs" \
+    -no-reboot "$@"
+}
+
+# Boot with a virtio-gpu display and drive it through QMP (tools/qemu-drive.py):
+# touch input and screenshots. SHOT_ACTIONS is the action list, for example
+#   SHOT_ACTIONS="wait:3;shot:lock;hold:195,766:1200;wait:2;shot:home"
+# Screenshots land in $out/shots/.
+screenshot() {
+  local qmp=$out/qemu-qmp.sock serial=$out/serial.log
+  rm -f "$qmp" "$serial"
+  rm -rf "$out/shots"
+  qemu_common "file:$serial" "${SHOT_KARGS:-}" "${display_args[@]}" -display none \
+    -qmp "unix:$qmp,server,nowait" &
   local qpid=$!
-  python3 -I - "$sock" "$serial" "$ppm" "$png" "$qpid" <<'PY'
-import os, socket, struct, sys, time, zlib
-sock_path, serial, ppm, png, qpid = sys.argv[1:6]
-
-def wait(pred, what, timeout=90):
-    end = time.time() + timeout
-    while time.time() < end:
-        if pred():
-            return
-        time.sleep(0.25)
-    print("TIMEOUT waiting for", what)
-    try:
-        print(open(serial, errors="replace").read()[-2000:])
-    finally:
-        os.kill(int(qpid), 15)
-    sys.exit(1)
-
-def drawn():
-    return os.path.exists(serial) and "halo-splash: drawn" in open(serial, errors="replace").read()
-
-wait(lambda: os.path.exists(sock_path), "the QEMU monitor")
-wait(drawn, "halo-splash to draw")
-time.sleep(1.0)  # let the display update reach QEMU's console
-s = socket.socket(socket.AF_UNIX)
-s.connect(sock_path)
-s.settimeout(5)
-s.recv(4096)
-s.sendall(f"screendump {ppm}\n".encode())
-wait(lambda: os.path.exists(ppm) and os.path.getsize(ppm) > 100, "the screendump")
-time.sleep(0.5)
-s.sendall(b"quit\n")
-
-# PPM (P6) -> PNG, no imaging library needed.
-data = open(ppm, "rb").read()
-parts = data.split(b"\n", 3)
-assert parts[0] == b"P6", parts[0]
-w, h = map(int, parts[1].split())
-pix = parts[3]
-# QEMU pads each row to a 4-byte boundary, so use the real stride.
-stride = len(pix) // h
-assert stride >= w * 3 and len(pix) == stride * h, (len(pix), w, h)
-raw = b"".join(b"\x00" + pix[y * stride:y * stride + w * 3] for y in range(h))
-def chunk(t, d):
-    c = struct.pack(">I", len(d)) + t + d
-    return c + struct.pack(">I", zlib.crc32(t + d) & 0xFFFFFFFF)
-open(png, "wb").write(
-    b"\x89PNG\r\n\x1a\n"
-    + chunk(b"IHDR", struct.pack(">IIBBBBB", w, h, 8, 2, 0, 0, 0))
-    + chunk(b"IDAT", zlib.compress(raw, 6))
-    + chunk(b"IEND", b"")
-)
-print(f"screenshot {w}x{h} -> {png}")
-PY
+  python3 "$repo/tools/qemu-drive.py" "$qmp" "$serial" "$qpid" "$out/shots" \
+    "${SHOT_ACTIONS:-wait:3;shot:screenshot}"
   wait "$qpid" 2>/dev/null || true
-  grep -E "halo-initramfs|haloinit|halo-splash" "$serial" || true
+  grep -E "halo-initramfs|haloinit|halo-splash|halo-fbdev|\[halo\]" "$serial" | head -40 || true
 }
 
 case ${1:-} in
   kernel) build_kernel ;;
+  sysroot) build_sysroot ;;
   initrd) build_initrd ;;
   rootfs) build_rootfs ;;
-  run) qemu "" ;;
+  run) qemu_common mon:stdio "" -nographic ;;
+  vnc)
+    echo "Open vnc://localhost:5900 (macOS: Finder > Go > Connect to Server). Ctrl-C stops."
+    qemu_common stdio "" "${display_args[@]}" -display vnc=127.0.0.1:0
+    ;;
   shot) screenshot ;;
   test)
     log=$out/boot-test.log
-    timeout 180 bash -c "$(declare -f qemu); image=$image initrd=$initrd rootfs=$rootfs; qemu halo.test=boot" \
-      >"$log" 2>&1 || true
+    # shellcheck disable=SC2046
+    timeout 180 qemu-system-aarch64 $(accel_args) -m 2G -smp 4 \
+      -kernel "$image" -initrd "$initrd" \
+      -drive "file=$rootfs,if=none,format=raw,id=root,readonly=on" \
+      -device virtio-blk-device,drive=root \
+      -append "console=ttyAMA0 root=/dev/vda rootfstype=erofs ro halo.test=boot" \
+      -nographic -no-reboot >"$log" 2>&1 || true
     cat "$log"
     fail=0
     for want in "halo-initramfs: switching root" "haloinit: root is erofs" "haloinit: boot ok"; do
@@ -194,5 +201,5 @@ case ${1:-} in
     done
     [ "$fail" = 0 ] && echo "PASS: booted from the EROFS image" || { echo "FAIL"; exit 1; }
     ;;
-  *) sed -n '2,14p' "$0"; exit 2 ;;
+  *) sed -n '2,17p' "$0"; exit 2 ;;
 esac

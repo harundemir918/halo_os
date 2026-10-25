@@ -38,7 +38,10 @@ class _EdgeSwipesState extends State<EdgeSwipes> {
     return LayoutBuilder(
       builder: (context, box) => GestureDetector(
         behavior: HitTestBehavior.translucent,
-        onVerticalDragStart: (d) {
+        // The zone comes from where the finger went down. `onVerticalDragStart`
+        // reports where the drag was recognized, about one touch slop (18 px)
+        // later, which misses the edge on a slow swipe.
+        onVerticalDragDown: (d) {
           final p = d.localPosition;
           _dy = 0;
           if (p.dy <= widget.edge) {
@@ -51,6 +54,7 @@ class _EdgeSwipesState extends State<EdgeSwipes> {
             _zone = null;
           }
         },
+        onVerticalDragCancel: () => _zone = null,
         onVerticalDragUpdate: (d) => _dy += d.delta.dy,
         onVerticalDragEnd: (_) {
           final zone = _zone;

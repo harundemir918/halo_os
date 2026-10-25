@@ -17,6 +17,30 @@ url = "https://github.com/llvm/llvm-project/releases/download/llvmorg-23.1.4/llv
 sha256 = "819ecf7351f1a66f76b2d701d8942faaf5faeb324cb90c9d5b090de142434bb2"
 license = "Apache-2.0 WITH LLVM-exception"
 
+[[source]]
+name = "glibc"
+version = "2.43"
+note = "sha256 recorded on first download (trust on first use): GNU publishes no checksum file. Built into our sysroot by build/recipes/glibc.toml."
+url = "https://ftp.gnu.org/gnu/glibc/glibc-2.43.tar.xz"
+sha256 = "d9c86c6b5dbddb43a3e08270c5844fc5177d19442cf5b8df4be7c07cd5fa3831"
+license = "LGPL-2.1-or-later"
+
+[[source]]
+name = "flutter-engine-embedder"
+version = "06a2e2a110089dff50fe635cffd2a61e1b24fbcd"
+note = "Prebuilt libflutter_engine.so and flutter_embedder.h from Google CI, for Flutter 3.47.4. Exception to 'recipes only' under D-016 (option C): replace with a source build before Phase 7. Needs only glibc (symbols up to GLIBC_2.18)."
+url = "https://storage.googleapis.com/flutter_infra_release/flutter/06a2e2a110089dff50fe635cffd2a61e1b24fbcd/linux-arm64/linux-arm64-embedder.zip"
+sha256 = "fd4917192bbadc1a424360ebb23dae599b5e3663923a0f306e86232318904f36"
+license = "BSD-3-Clause"
+
+[[source]]
+name = "flutter-engine-artifacts"
+version = "06a2e2a110089dff50fe635cffd2a61e1b24fbcd"
+note = "Same engine build: icudtl.dat (needed at runtime) and gen_snapshot (for AOT later)."
+url = "https://storage.googleapis.com/flutter_infra_release/flutter/06a2e2a110089dff50fe635cffd2a61e1b24fbcd/linux-arm64/artifacts.zip"
+sha256 = "db150f82c4d9881b19849c48098f8517849b092a3e7199325c5f9c4e90bf70d7"
+license = "BSD-3-Clause"
+
 [[font]]
 name = "Bricolage Grotesque"
 use = "Voice: headlines, titles, body (variable font, axes opsz/wdth/wght)"

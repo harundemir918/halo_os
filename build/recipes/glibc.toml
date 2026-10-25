@@ -1,0 +1,39 @@
+# The C library for the image and the build's sysroot. Our own build, so no
+# distribution library ends up in the image (D-001, D-014).
+#
+# Interim: built with the build host's gcc until the LLVM toolchain recipe
+# exists (D-007).
+name = "glibc"
+source = "glibc"
+deps = ["linux-headers"]
+
+[[step]]
+name = "configure"
+run = '''
+rm -rf "$BUILD" && mkdir -p "$BUILD" && cd "$BUILD"
+# Loader and core libraries live in /lib: the aarch64 ELF interpreter path is
+# /lib/ld-linux-aarch64.so.1.
+printf 'slibdir=/lib\nrtlddir=/lib\n' > configparms
+"$SRC/configure" \
+  --prefix=/usr \
+  --build=aarch64-linux-gnu \
+  --with-headers="$SYSROOT/usr/include" \
+  --enable-kernel=5.10 \
+  --disable-werror --disable-nscd --disable-profile --disable-crypt \
+  --without-selinux --without-gd
+'''
+
+[[step]]
+name = "build"
+run = '''
+cd "$BUILD"
+make -j"$JOBS"
+'''
+
+[[step]]
+name = "install"
+run = '''
+cd "$BUILD"
+make install DESTDIR="$SYSROOT"
+test -x "$SYSROOT/lib/ld-linux-aarch64.so.1"
+'''

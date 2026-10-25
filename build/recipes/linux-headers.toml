@@ -1,0 +1,9 @@
+# Kernel UAPI headers for the sysroot, from the pinned kernel source.
+name = "linux-headers"
+source = "linux"
+
+[[step]]
+name = "install headers"
+run = '''
+make -C "$SRC" ARCH=arm64 INSTALL_HDR_PATH="$SYSROOT/usr" headers_install
+'''

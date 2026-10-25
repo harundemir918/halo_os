@@ -15,11 +15,18 @@ base:
   - template:debian-13
 
 vmType: vz
+# Lets QEMU use KVM inside the VM (Apple M3 or later, macOS 15 or later).
+nestedVirtualization: true
 cpus: 10
 memory: 16GiB
 disk: 200GiB
 
 provision:
+  # KVM is root:kvm 0660; let the VM user use it. Runs on every boot.
+  - mode: boot
+    script: |
+      #!/bin/bash
+      [ -e /dev/kvm ] && chmod 0666 /dev/kvm || true
   - mode: system
     script: |
       #!/bin/bash
@@ -27,7 +34,7 @@ provision:
       export DEBIAN_FRONTEND=noninteractive
       apt-get update
       apt-get install -y --no-install-recommends \
-        bc bison build-essential ca-certificates cmake cpio curl dosfstools \
+        bc bison build-essential ca-certificates cmake cpio curl dosfstools gawk \
         erofs-utils file flex gdisk git libelf-dev libssl-dev meson ninja-build \
         pkg-config python3 qemu-system-arm qemu-system-x86 qemu-utils rsync \
         unzip xz-utils cryptsetup-bin

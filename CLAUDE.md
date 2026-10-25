@@ -95,8 +95,11 @@ Boot the OS in QEMU (inside the Lima VM, see docs/BUILD.md "Build host"):
 
 ```sh
 limactl shell halo-builder
-tools/dev-boot.sh kernel && tools/dev-boot.sh initrd && tools/dev-boot.sh rootfs && tools/dev-boot.sh test   # PASS: booted from the EROFS image
-tools/dev-boot.sh shot    # boot with a display, save ~/halo-out/screenshot.png (limactl copy it out)
+# On the host first: (cd shell && flutter build bundle --debug --dart-define=HALO_BACKEND=mock)
+tools/dev-boot.sh kernel && tools/dev-boot.sh sysroot && tools/dev-boot.sh initrd && tools/dev-boot.sh rootfs
+tools/dev-boot.sh test    # PASS: booted from the EROFS image
+tools/dev-boot.sh vnc     # boot with a display; then open vnc://localhost:5900 on the Mac and click
+SHOT_ACTIONS="wait:3;shot:lock" tools/dev-boot.sh shot   # drive it with touch, screenshots in ~/halo-out/shots
 ```
 
 Fast UI loop (once `shell/` exists): run the shell as a macOS desktop Flutter app with `--dart-define=HALO_BACKEND=mock` at a 390 × 844 window. Kernel, rootfs and image builds need Linux, so on macOS they run inside the build container.

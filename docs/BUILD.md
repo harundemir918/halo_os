@@ -87,3 +87,24 @@ out/<target>/
 ├── halo.img        full disk image (GPT)
 └── sdk/            sysroot + headers for building the embedder/apps out-of-tree
 ```
+
+## 7. Booting Halo in QEMU today
+
+Until the `halo` driver exists, `tools/dev-boot.sh` builds and boots the image inside the Lima VM (§1 "Build host"). The recipes in `build/recipes/` are run by `tools/recipe.py`.
+
+```sh
+# On the Mac: the shell as a Flutter bundle
+(cd shell && flutter build bundle --debug --dart-define=HALO_BACKEND=mock)
+
+# In the VM (limactl shell halo-builder), from the repo
+tools/dev-boot.sh kernel     # Linux 6.18, our config fragment
+tools/dev-boot.sh sysroot    # glibc 2.43 from source, the pinned Flutter engine
+tools/dev-boot.sh initrd     # halo-initramfs
+tools/dev-boot.sh rootfs     # haloinit, the embedder, glibc, engine and shell in an EROFS image
+tools/dev-boot.sh test       # headless: expects to boot from the EROFS image
+tools/dev-boot.sh vnc        # boot with a display; open vnc://localhost:5900 on the Mac
+```
+
+What runs: the kernel starts `halo-initramfs`, which mounts the EROFS image and switches root. `haloinit` (PID 1) mounts `/tmp` and `/run` and starts `halo-fbdev-embedder`, which runs the shell on the engine's software renderer and draws into the virtio-gpu framebuffer. Touch comes from the virtio tablet through evdev. QEMU uses KVM when the VM has `/dev/kvm` (`nestedVirtualization` in `build/lima/halo-builder.yaml`, Apple M3 or later), else TCG.
+
+Interim, all tracked in the ROADMAP: the build host's gcc builds glibc and the embedder (D-007 wants LLVM), and the engine is a prebuilt artifact (D-016).
