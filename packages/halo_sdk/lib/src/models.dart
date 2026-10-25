@@ -217,3 +217,55 @@ class StreamSummary {
   /// The few that need the user, in priority order.
   final List<String> needYou;
 }
+
+/// Appearance. Only dark is designed so far (D-013), so choosing light or auto
+/// is stored but does not change the theme yet.
+enum Appearance { dark, light, auto }
+
+/// The signed-in person.
+class Account {
+  const Account({required this.name, required this.initials});
+
+  final String name;
+
+  /// Two letters for the avatar (`AS`).
+  final String initials;
+}
+
+/// State behind the System (settings) screen.
+class SystemState {
+  const SystemState({
+    required this.account,
+    required this.appearance,
+    required this.textSize,
+    required this.focus,
+    required this.privacyAlerts,
+  });
+
+  final Account account;
+  final Appearance appearance;
+
+  /// 0 to 1, mapped onto [minTextSize] to [maxTextSize].
+  final double textSize;
+
+  /// Active focus mode name (`Work`).
+  final String focus;
+  final int privacyAlerts;
+
+  static const int minTextSize = 12;
+  static const int maxTextSize = 20;
+
+  /// Text size in px (16 at 0.5).
+  int get textSizePx =>
+      (minTextSize + textSize.clamp(0.0, 1.0) * (maxTextSize - minTextSize))
+          .round();
+
+  SystemState copyWith({Appearance? appearance, double? textSize}) =>
+      SystemState(
+        account: account,
+        appearance: appearance ?? this.appearance,
+        textSize: textSize ?? this.textSize,
+        focus: focus,
+        privacyAlerts: privacyAlerts,
+      );
+}

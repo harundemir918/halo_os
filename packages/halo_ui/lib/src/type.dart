@@ -119,6 +119,18 @@ abstract final class HaloType {
   /// Underlined text action (`REPLY`, `LATER`).
   static final TextStyle textAction = _mono(11, 400, 0.12);
 
+  /// Command field text (`find a setting`).
+  static final TextStyle command = _mono(14, 400, 0);
+
+  /// Initials in the avatar (`AS`).
+  static final TextStyle avatar = _mono(13, 500, 0);
+
+  /// Right-hand status on an accordion row (`HOME-5G`, `OPEN`).
+  static final TextStyle accordionStatus = _mono(11, 400, 0.06);
+
+  /// Label above a control (`APPEARANCE`, `TEXT SIZE`).
+  static final TextStyle fieldLabel = _mono(11, 400, 0.12);
+
   /// Section kicker (`NOW`) and list-section labels (`TODAY`).
   static final TextStyle kicker = _mono(11, 400, 0.14);
 

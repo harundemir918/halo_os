@@ -6,6 +6,7 @@ import 'home/home_screen.dart';
 import 'lock/lock_screen.dart';
 import 'stream/stream_screen.dart';
 import 'switchboard/switchboard_screen.dart';
+import 'system/system_screen.dart';
 
 /// Only the mock backend exists so far (`--dart-define=HALO_BACKEND=mock`).
 const _backendName = String.fromEnvironment(
@@ -53,6 +54,7 @@ class _HaloShellState extends State<HaloShell> {
           ),
           'switchboard' => SwitchboardScreen(backend: widget.backend),
           'stream' => StreamScreen(backend: widget.backend),
+          'system' => SystemScreen(backend: widget.backend),
           final app => _Placeholder(
             title: app,
             onBack: () => setState(() => _screen = 'home'),

@@ -25,6 +25,14 @@ abstract interface class HaloBackend {
 
   void setPlaying(bool playing);
 
+  /// System (settings) state.
+  SystemState get system;
+
+  void setAppearance(Appearance appearance);
+
+  /// Sets the text size from 0 to 1.
+  void setTextSize(double value);
+
   /// Today's events in time order.
   List<CalendarEvent> get agenda;
 

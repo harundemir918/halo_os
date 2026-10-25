@@ -54,6 +54,22 @@ abstract final class HaloRadii {
     bottomLeft: Radius.circular(6),
   );
 
+  /// Account avatar.
+  static const BorderRadius notchAvatar = BorderRadius.only(
+    topLeft: Radius.circular(22),
+    topRight: Radius.circular(4),
+    bottomRight: Radius.circular(4),
+    bottomLeft: Radius.circular(4),
+  );
+
+  /// Command field.
+  static const BorderRadius notchField = BorderRadius.only(
+    topLeft: Radius.circular(22),
+    topRight: Radius.circular(6),
+    bottomRight: Radius.circular(6),
+    bottomLeft: Radius.circular(6),
+  );
+
   /// Plain rows and toggle rows.
   static const BorderRadius flat = BorderRadius.all(Radius.circular(6));
 

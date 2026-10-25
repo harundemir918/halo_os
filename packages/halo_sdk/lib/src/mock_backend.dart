@@ -88,6 +88,29 @@ class MockBackend implements HaloBackend {
   void setVolume(double value) =>
       _update(_quick.copyWith(volume: value.clamp(0.0, 1.0)));
 
+  SystemState _system = const SystemState(
+    account: Account(name: 'Avery Stone', initials: 'AS'),
+    appearance: Appearance.dark,
+    textSize: 0.46,
+    focus: 'Work',
+    privacyAlerts: 2,
+  );
+
+  @override
+  SystemState get system => _system;
+
+  @override
+  void setAppearance(Appearance appearance) {
+    _system = _system.copyWith(appearance: appearance);
+    _changes.add(null);
+  }
+
+  @override
+  void setTextSize(double value) {
+    _system = _system.copyWith(textSize: value.clamp(0.0, 1.0));
+    _changes.add(null);
+  }
+
   @override
   void setPlaying(bool playing) {
     final m = _quick.media;

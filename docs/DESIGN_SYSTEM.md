@@ -96,6 +96,8 @@ Blocks have a **large top-left radius** and small radii on the other three corne
 | `notchM` | 18 / 4 / 4 / 4 | Buttons, inputs, avatar |
 | `notchML` | 20 / 6 / 6 / 6 | Lock shortcut squares |
 | `notchL` | 22–26 / 4–6 | Medium cards |
+| `notchAvatar` | 22 / 4 / 4 / 4 | Account avatar |
+| `notchField` | 22 / 6 / 6 / 6 | Command field |
 | `notchXL` | 28 / 6 / 6 / 6 | Large cards, dial plates, Recents slats, Stream summary, Lock time tile |
 | `notchXXL` | 30 / 6 / 6 / 6 | Hero blocks (Stream summary card) |
 | `radiusFlat` | 6 (all corners) | Plain rows, toggle rows |

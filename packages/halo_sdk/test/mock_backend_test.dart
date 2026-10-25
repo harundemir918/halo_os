@@ -121,6 +121,36 @@ void main() {
     });
   });
 
+  group('system', () {
+    test('starts as the System design', () {
+      final s = MockBackend().system;
+      expect(s.account.initials, 'AS');
+      expect(s.account.name, 'Avery Stone');
+      expect(s.appearance, Appearance.dark);
+      expect(s.textSizePx, 16);
+      expect(s.focus, 'Work');
+      expect(s.privacyAlerts, 2);
+    });
+
+    test('text size maps 0..1 onto 12..20 px', () {
+      final b = MockBackend();
+      b.setTextSize(0);
+      expect(b.system.textSizePx, 12);
+      b.setTextSize(1);
+      expect(b.system.textSizePx, 20);
+      b.setTextSize(5);
+      expect(b.system.textSizePx, 20);
+    });
+
+    test('appearance changes and notifies', () async {
+      final b = MockBackend();
+      final changed = b.changes.first;
+      b.setAppearance(Appearance.auto);
+      await changed;
+      expect(b.system.appearance, Appearance.auto);
+    });
+  });
+
   test('minutesUntil never goes negative', () {
     final e = backend.nextEvent!;
     expect(e.minutesUntil(DateTime(2026, 10, 23, 11)), 0);
