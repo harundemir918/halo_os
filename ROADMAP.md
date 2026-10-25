@@ -13,7 +13,7 @@ Legend: ☐ to do · ◐ in progress · ☑ done
 - ☑ Pin versions: Flutter 3.47.4 (`.flutter-version`), Rust 1.99.1 (`rust-toolchain.toml`), kernel 6.18.58 (`kernel/VERSION`), LLVM 23.1.4 (`third_party/manifest.toml`; reconcile with the Flutter engine clang before Phase 1)
 - ◐ Build container image (host tools only): `build/container/Containerfile` written, never built (no container runtime on the dev machine yet)
 - ◐ CI: format, lint and tests for Rust and Dart: `.github/workflows/ci.yml` written; every step passes locally, but it has not run on GitHub yet
-- ◐ License chosen (☐). Font licenses (OFL) recorded in `third_party/` (☑)
+- ☑ License chosen (MIT, `LICENSE`). Font licenses (OFL) recorded in `third_party/`
 
 **Exit:** a clean checkout runs `cargo test` and `flutter test` (empty but wired) in CI.
 
