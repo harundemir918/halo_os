@@ -1,0 +1,41 @@
+# Halo OS build VM for macOS hosts (Lima). HOST tools only: nothing from this
+# VM goes into the target image (docs/BUILD.md §1). Same role as
+# build/container/Containerfile; keep the package lists in sync.
+#
+#   limactl start --name halo-builder build/lima/halo-builder.yaml
+#   limactl shell halo-builder
+#
+# Lima's default mounts expose $HOME read-only at the same path, so the repo is
+# visible inside the VM. Build output goes to the VM's own disk (hermetic and
+# fast); copy artifacts out with `limactl copy`.
+
+minimumLimaVersion: 2.0.0
+
+base:
+  - template:debian-13
+
+vmType: vz
+cpus: 10
+memory: 16GiB
+disk: 200GiB
+
+provision:
+  - mode: system
+    script: |
+      #!/bin/bash
+      set -eux -o pipefail
+      export DEBIAN_FRONTEND=noninteractive
+      apt-get update
+      apt-get install -y --no-install-recommends \
+        bc bison build-essential ca-certificates cmake cpio curl dosfstools \
+        erofs-utils file flex gdisk git libelf-dev libssl-dev meson ninja-build \
+        pkg-config python3 qemu-system-arm qemu-system-x86 qemu-utils rsync \
+        unzip xz-utils cryptsetup-bin
+  - mode: user
+    script: |
+      #!/bin/bash
+      set -eux -o pipefail
+      # Rust comes from rust-toolchain.toml, so the VM never drifts from it.
+      if [ ! -x "$HOME/.cargo/bin/rustup" ]; then
+        curl -fsSL https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain none
+      fi

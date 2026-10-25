@@ -9,6 +9,17 @@ Status: **planned**. None of the commands below exist yet. This document describ
 - Builds are hermetic and reproducible. Everything runs inside the pinned build container, so macOS hosts work the same as Linux hosts.
 - No distribution packages end up in the image. The container provides the *host* tools. The *target* is built entirely from our recipes.
 
+### Build host
+
+Kernel, rootfs and image builds need Linux. On macOS they run in a Lima VM defined in `build/lima/halo-builder.yaml` (Debian 13, host tools only, same package list as `build/container/Containerfile`):
+
+```sh
+limactl start --name halo-builder build/lima/halo-builder.yaml   # once
+limactl shell halo-builder                                       # work inside
+```
+
+Lima mounts your home directory read-only at the same path, so the repo is visible in the VM. Build output goes to the VM's own disk. Copy artifacts out with `limactl copy`.
+
 ## 2. Toolchain
 
 | Piece | Choice (proposed) | Why |
