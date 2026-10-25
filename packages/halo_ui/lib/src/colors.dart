@@ -21,6 +21,7 @@ abstract final class HaloColors {
   static const Color line14 = Color(0x24FFFFFF);
   static const Color line16 = Color(0x29FFFFFF);
   static const Color line18 = Color(0x2EFFFFFF);
+  static const Color line20 = Color(0x33FFFFFF);
   static const Color line22 = Color(0x38FFFFFF);
   static const Color line35 = Color(0x59FFFFFF);
 }

@@ -98,6 +98,15 @@ abstract final class HaloType {
   /// Small mono metadata with no tracking: ages and row trailers (`2M`, `ROOM 3`).
   static final TextStyle meta = _mono(11, 400, 0);
 
+  /// Caption inside a dial under its value (`LIGHT`).
+  static final TextStyle dialCaption = _mono(10, 400, 0.16);
+
+  /// Mono footer under a dial or a row of cells (`AUTO · ON`, `FULL BY 10:20`).
+  static final TextStyle footer = _mono(11, 400, 0.1);
+
+  /// Track title in the media strip.
+  static final TextStyle mediaTitle = _voice(15, 600, 0);
+
   /// Section kicker (`NOW`) and list-section labels (`TODAY`).
   static final TextStyle kicker = _mono(11, 400, 0.14);
 

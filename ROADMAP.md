@@ -35,7 +35,7 @@ Legend: ☐ to do · ◐ in progress · ☑ done
 - ☑ `packages/halo_ui`: tokens (colors, type, notch radii, spacing), bundled fonts, `NotchBorder`, `HaloTheme`
 - ◐ Widgets: Switch ☑, ToggleRow ☑, Segmented ☑, Slider ☑, Buttons ☑, BatteryLine ☑, BatteryCells ☑, Kicker ☑; Dial ☐, Slat ☐, CommandField ☐, Timeline ☐, Arc ☐
 - ◐ `packages/halo_sdk` API surface plus the **mock** backend (fixtures matching the design copy: Elif, Design review, Room 3…). Clock, status, next event and notifications so far
-- ◐ Screens: Lock ☑ (`shell/`, golden test, hold-to-open), Home Arc ☑ (arc drag, focus and launch), Recents ☐, Switchboard ☐, Stream ☐, System ☐
+- ◐ Screens: Lock ☑ (`shell/`, golden test, hold-to-open), Home Arc ☑ (arc drag, focus and launch), Switchboard ☑ (dials, toggles, media, battery cells), Recents ☐, Stream ☐, System ☐
 - ☐ Navigation and gestures: hold-to-open, the arc's focus/launch, slat pan and flick-to-close, shell edge swipes (see open questions)
 - ☐ Golden tests against `design/screens/*.png` at 390 × 844 @2x
 - ☐ Accessibility pass: semantics labels, text scaling (System → Text size), reduce motion

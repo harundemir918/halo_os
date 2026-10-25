@@ -4,6 +4,7 @@ import 'package:halo_ui/halo_ui.dart';
 
 import '../app_icons.dart';
 import '../format.dart';
+import '../status_bar.dart';
 
 /// Home: what matters now at the top, the apps on an arc in thumb reach.
 class HomeScreen extends StatefulWidget {
@@ -36,7 +37,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final b = widget.backend;
     final now = b.now;
-    final status = b.status;
     final event = b.nextEvent;
     final unreadApps = b.notifications
         .where((n) => n.unread)
@@ -70,21 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
             top: 0,
             left: 0,
             right: 0,
-            child: HaloBatteryLine(fraction: status.battery),
-          ),
-          Positioned(
-            top: HaloSpace.statusTop,
-            left: HaloSpace.gutter,
-            right: HaloSpace.gutter,
-            child: HaloStatusRow(
-              left: TextSpan(
-                children: [
-                  HaloStatusRow.strong(HaloFormat.clock(now)),
-                  TextSpan(text: '  ${HaloFormat.statusDate(now)}'),
-                ],
-              ),
-              right: '${status.network} · ${status.batteryPercent}%',
-            ),
+            child: ShellStatusBar(backend: b),
           ),
           Positioned(
             top: 58,

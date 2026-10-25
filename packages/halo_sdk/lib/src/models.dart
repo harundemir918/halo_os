@@ -1,9 +1,16 @@
 /// Battery and connectivity for the status row.
 class DeviceStatus {
-  const DeviceStatus({required this.battery, required this.network});
+  const DeviceStatus({
+    required this.battery,
+    required this.network,
+    this.fullBy,
+  });
 
   /// 0 to 1.
   final double battery;
+
+  /// Estimated time the battery is full (`10:20`), while charging.
+  final String? fullBy;
 
   /// Connectivity summary such as `5G · WI-FI`.
   final String network;
@@ -82,4 +89,93 @@ class HaloAppInfo {
   /// Stable id (`messages`).
   final String id;
   final String label;
+}
+
+/// A quick toggle on the Switchboard (Wi-Fi, Bluetooth, ...).
+class QuickToggle {
+  const QuickToggle({
+    required this.id,
+    required this.title,
+    required this.detail,
+    required this.on,
+  });
+
+  final String id;
+  final String title;
+
+  /// Mono sub-label (`Home-5G`, `2 devices`, `Off`).
+  final String detail;
+  final bool on;
+
+  QuickToggle copyWith({String? detail, bool? on}) => QuickToggle(
+    id: id,
+    title: title,
+    detail: detail ?? this.detail,
+    on: on ?? this.on,
+  );
+}
+
+/// The now-playing session shown on the Switchboard.
+class MediaSession {
+  const MediaSession({
+    required this.title,
+    required this.artist,
+    required this.progress,
+    required this.playing,
+  });
+
+  final String title;
+  final String artist;
+
+  /// 0 to 1.
+  final double progress;
+  final bool playing;
+
+  MediaSession copyWith({double? progress, bool? playing}) => MediaSession(
+    title: title,
+    artist: artist,
+    progress: progress ?? this.progress,
+    playing: playing ?? this.playing,
+  );
+}
+
+/// State behind the Switchboard.
+class QuickSettings {
+  const QuickSettings({
+    required this.brightness,
+    required this.brightnessAuto,
+    required this.volume,
+    required this.volumeFooter,
+    required this.toggles,
+    this.media,
+  });
+
+  /// 0 to 1.
+  final double brightness;
+
+  /// Auto brightness. Setting a level by hand turns it off.
+  final bool brightnessAuto;
+
+  /// 0 to 1.
+  final double volume;
+
+  /// Which streams the volume dial controls (`Media · ring`).
+  final String volumeFooter;
+  final List<QuickToggle> toggles;
+  final MediaSession? media;
+
+  QuickSettings copyWith({
+    double? brightness,
+    bool? brightnessAuto,
+    double? volume,
+    List<QuickToggle>? toggles,
+    MediaSession? media,
+  }) => QuickSettings(
+    brightness: brightness ?? this.brightness,
+    brightnessAuto: brightnessAuto ?? this.brightnessAuto,
+    volume: volume ?? this.volume,
+    volumeFooter: volumeFooter,
+    toggles: toggles ?? this.toggles,
+    media: media ?? this.media,
+  );
 }

@@ -4,6 +4,7 @@ import 'package:halo_ui/halo_ui.dart';
 
 import 'home/home_screen.dart';
 import 'lock/lock_screen.dart';
+import 'switchboard/switchboard_screen.dart';
 
 /// Only the mock backend exists so far (`--dart-define=HALO_BACKEND=mock`).
 const _backendName = String.fromEnvironment(
@@ -49,6 +50,7 @@ class _HaloShellState extends State<HaloShell> {
             backend: widget.backend,
             onLaunch: (id) => setState(() => _screen = 'app:$id'),
           ),
+          'switchboard' => SwitchboardScreen(backend: widget.backend),
           final app => _Placeholder(
             title: app,
             onBack: () => setState(() => _screen = 'home'),

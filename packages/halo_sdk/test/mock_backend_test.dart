@@ -56,6 +56,71 @@ void main() {
     expect(backend.notifications.last.actionPrompt, isNull);
   });
 
+  group('quick settings', () {
+    test('start as the Switchboard design', () {
+      final b = MockBackend();
+      final q = b.quick;
+      expect((q.brightness * 100).round(), 64);
+      expect(q.brightnessAuto, isTrue);
+      expect((q.volume * 100).round(), 42);
+      expect(q.volumeFooter, 'Media · ring');
+      expect(q.toggles.map((t) => t.title), [
+        'Wi-Fi',
+        'Bluetooth',
+        'Cellular',
+        'Airplane',
+        'Focus',
+      ]);
+      expect(q.toggles.map((t) => t.on), [true, true, true, false, true]);
+      expect(q.media!.title, 'Night Drive');
+      expect(q.media!.artist, 'Mira Okafor');
+      expect(q.media!.progress, 0.42);
+      expect(b.status.fullBy, '10:20');
+    });
+
+    test('setting brightness by hand turns auto off and notifies', () async {
+      final b = MockBackend();
+      final changed = b.changes.first;
+      b.setBrightness(0.8);
+      await changed;
+      expect(b.quick.brightness, 0.8);
+      expect(b.quick.brightnessAuto, isFalse);
+    });
+
+    test('values are clamped', () {
+      final b = MockBackend();
+      b.setBrightness(2);
+      b.setVolume(-1);
+      expect(b.quick.brightness, 1);
+      expect(b.quick.volume, 0);
+    });
+
+    test('airplane switches the radios off but not Focus', () {
+      final b = MockBackend();
+      b.setToggle('airplane', true);
+      final on = {for (final t in b.quick.toggles) t.id: t.on};
+      expect(on['airplane'], isTrue);
+      expect(on['wifi'], isFalse);
+      expect(on['bluetooth'], isFalse);
+      expect(on['cellular'], isFalse);
+      expect(on['focus'], isTrue);
+      expect(b.quick.toggles.firstWhere((t) => t.id == 'wifi').detail, 'Off');
+    });
+
+    test('leaving airplane does not turn the radios back on', () {
+      final b = MockBackend();
+      b.setToggle('airplane', true);
+      b.setToggle('airplane', false);
+      expect(b.quick.toggles.firstWhere((t) => t.id == 'wifi').on, isFalse);
+    });
+
+    test('play and pause', () {
+      final b = MockBackend();
+      b.setPlaying(false);
+      expect(b.quick.media!.playing, isFalse);
+    });
+  });
+
   test('minutesUntil never goes negative', () {
     final e = backend.nextEvent!;
     expect(e.minutesUntil(DateTime(2026, 10, 23, 11)), 0);

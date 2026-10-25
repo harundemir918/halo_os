@@ -9,6 +9,22 @@ abstract interface class HaloBackend {
 
   DeviceStatus get status;
 
+  /// Emits whenever anything above or below changes. Broadcast.
+  Stream<void> get changes;
+
+  /// Switchboard state: dials, toggles and the media session.
+  QuickSettings get quick;
+
+  /// Turns a quick toggle on or off. Airplane mode switches the radios off.
+  void setToggle(String id, bool on);
+
+  /// Sets brightness by hand, which turns auto brightness off.
+  void setBrightness(double value);
+
+  void setVolume(double value);
+
+  void setPlaying(bool playing);
+
   /// Today's events in time order.
   List<CalendarEvent> get agenda;
 
