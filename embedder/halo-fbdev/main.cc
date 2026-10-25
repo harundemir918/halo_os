@@ -386,7 +386,8 @@ int main(int argc, char** argv) {
   metrics.struct_size = sizeof(metrics);
   metrics.width = g.fb.width;
   metrics.height = g.fb.height;
-  metrics.pixel_ratio = 1.0;
+  // The design frame is 390 logical px wide; a 780 px display is ratio 2.
+  metrics.pixel_ratio = static_cast<double>(g.fb.width) / 390.0;
   metrics.view_id = 0;
   FlutterEngineSendWindowMetricsEvent(g.engine, &metrics);
 

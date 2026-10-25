@@ -111,6 +111,8 @@ tools/run-on-mac.sh           # copies the image out of the VM, opens a window; 
 tools/run-on-mac.sh --no-copy # run the copy from last time
 ```
 
+The window is 390 x 844 points: the guest display is 2x (780 x 1688) and the shell renders at pixel ratio 2 (the embedder derives the ratio from the display width). `HALO_SCALE=1` gives a smaller window for a small screen. The kernel runs with `consoleblank=0`: with the default blank timeout the display powers down after ten minutes and QEMU shows "Display output is not active". A real power service will own that later (`halo-display`).
+
 `tools/dev-boot.sh vnc` also works, but macOS Screen Sharing refuses to connect to the Mac it runs on (`localhost` counts), so it needs another VNC client.
 
 What runs: the kernel starts `halo-initramfs`, which mounts the EROFS image and switches root. `haloinit` (PID 1) mounts `/tmp` and `/run` and starts `halo-fbdev-embedder`, which runs the shell on the engine's software renderer and draws into the virtio-gpu framebuffer. Touch comes from the virtio tablet through evdev. QEMU uses KVM when the VM has `/dev/kvm` (`nestedVirtualization` in `build/lima/halo-builder.yaml`, Apple M3 or later), else TCG.

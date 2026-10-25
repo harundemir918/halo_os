@@ -33,7 +33,9 @@ engine=$out/engine
 embedder=$out/embedder/halo-fbdev-embedder
 assets=$repo/shell/build/flutter_assets
 target=aarch64-unknown-linux-gnu
-display_args=(-device virtio-gpu-pci,xres=390,yres=844 -device virtio-tablet-pci -device virtio-keyboard-pci)
+# HALO_SCALE multiplies the 390 x 844 design frame (the shell's pixel ratio follows).
+scale=${HALO_SCALE:-1}
+display_args=(-device "virtio-gpu-pci,xres=$((390 * scale)),yres=$((844 * scale))" -device virtio-tablet-pci -device virtio-keyboard-pci)
 
 manifest() { # manifest <source-name> <key>
   python3 -I - "$repo/third_party/manifest.toml" "$1" "$2" <<'EOF'
@@ -154,7 +156,7 @@ qemu_common() {
     -drive "file=$rootfs,if=none,format=raw,id=root,readonly=on" \
     -device virtio-blk-device,drive=root \
     -serial "$serial" \
-    -append "console=ttyAMA0 root=/dev/vda rootfstype=erofs ro vt.global_cursor_default=0 $kargs" \
+    -append "console=ttyAMA0 root=/dev/vda rootfstype=erofs ro vt.global_cursor_default=0 consoleblank=0 $kargs" \
     -no-reboot "$@"
 }
 
