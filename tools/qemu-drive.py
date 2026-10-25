@@ -103,7 +103,7 @@ def main():
             time.sleep(float(parts[1]) / 1000); button(False)
         elif kind == "swipe":
             (x1, y1), (x2, y2), ms = pt(parts[0]), pt(parts[1]), float(parts[2])
-            steps = 12
+            steps = max(12, int(ms / 16))  # about 60 pointer events per second
             move(x1, y1); time.sleep(0.15); button(True)
             for i in range(1, steps + 1):
                 move(x1 + (x2 - x1) * i / steps, y1 + (y2 - y1) * i / steps)

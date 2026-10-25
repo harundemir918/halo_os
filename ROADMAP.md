@@ -53,6 +53,8 @@ Legend: ☐ to do · ◐ in progress · ☑ done
 - ☐ Recents slats show live and frozen app surfaces
 - ☐ On-screen keyboard (shell-rendered, text-input-v3)
 
+*Baseline (2026-10-25):* the fbdev embedder sustains about 50 fps during touch drags under QEMU/HVF (CPU software rendering at 784 × 1696, debug JIT engine); `halo.trace` on the kernel command line prints it. Past 60 needs the work below: a GPU path, release AOT builds, and vsync-paced page flips.
+
 **Exit:** on QEMU, launch three apps from the arc, switch between them in Recents, close one with a flick, and type into a text field. 60 fps in shell transitions on QEMU/virgl (best effort) and on the dev board.
 
 ## Phase 4: Core system services

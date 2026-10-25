@@ -405,6 +405,23 @@ int main(int argc, char** argv) {
     g.tasks.Stop();
   });
 
+  // With HALO_TRACE set, report presented frames per second while animating.
+  std::thread fps([] {
+    const char* trace = std::getenv("HALO_TRACE");
+    if (trace == nullptr || *trace == '\0') return;
+    uint64_t last = 0;
+    while (!g.quit) {
+      std::this_thread::sleep_for(std::chrono::seconds(1));
+      const uint64_t now = g.frames;
+      if (now != last) {
+        std::printf("halo-fbdev: %llu fps\n",
+                    static_cast<unsigned long long>(now - last));
+        std::fflush(stdout);
+      }
+      last = now;
+    }
+  });
+
   std::printf("halo-fbdev: running\n");
   std::fflush(stdout);
   g.tasks.Loop();
@@ -412,6 +429,7 @@ int main(int argc, char** argv) {
   g.quit = true;
   if (input.joinable()) input.join();
   watcher.join();
+  fps.join();
   FlutterEngineShutdown(g.engine);
   return 0;
 }
