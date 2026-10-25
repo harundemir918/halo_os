@@ -1,0 +1,20 @@
+# Halo OS build container: HOST tools only. Nothing from this image goes into
+# the target image; the target is built from our recipes (docs/BUILD.md §1).
+#
+# Not yet built or tested. Pin the base image by digest once it is built.
+FROM debian:trixie-slim
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        bc bison build-essential ca-certificates cmake cpio curl dosfstools \
+        erofs-utils file flex gdisk git libelf-dev libssl-dev meson ninja-build \
+        pkg-config python3 qemu-system-arm qemu-system-x86 qemu-utils rsync \
+        unzip xz-utils cryptsetup-bin \
+    && rm -rf /var/lib/apt/lists/*
+
+# Rust comes from rust-toolchain.toml, so the container never drifts from it.
+ENV RUSTUP_HOME=/opt/rustup CARGO_HOME=/opt/cargo PATH=/opt/cargo/bin:$PATH
+RUN curl -fsSL https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain none
+
+WORKDIR /work

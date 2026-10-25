@@ -1,6 +1,22 @@
 # Pinned upstream sources. Nothing here is vendored code; entries record
 # version, checksum and license. See CLAUDE.md hard rule 1.
 
+[[source]]
+name = "linux"
+version = "6.18.58"
+note = "Mainline LTS series 6.18. Also recorded in kernel/VERSION. Pinned 2026-10-25."
+url = "https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.18.58.tar.xz"
+sha256 = "069b19f9032c4dac8149ae4b6520c35debca0f42a9f6d52ee55ba6ca9b818013"
+license = "GPL-2.0-only WITH Linux-syscall-note"
+
+[[source]]
+name = "llvm-project"
+version = "23.1.4"
+note = "Reconcile with the clang the pinned Flutter engine builds with before Phase 1 (D-007). Pinned 2026-10-25."
+url = "https://github.com/llvm/llvm-project/releases/download/llvmorg-23.1.4/llvm-project-23.1.4.src.tar.xz"
+sha256 = "819ecf7351f1a66f76b2d701d8942faaf5faeb324cb90c9d5b090de142434bb2"
+license = "Apache-2.0 WITH LLVM-exception"
+
 [[font]]
 name = "Bricolage Grotesque"
 use = "Voice: headlines, titles, body (variable font, axes opsz/wdth/wght)"

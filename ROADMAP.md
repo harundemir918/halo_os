@@ -9,10 +9,10 @@ Legend: ☐ to do · ◐ in progress · ☑ done
 ## Phase 0: Foundations
 - ☑ Design exports and sources in `design/`
 - ☑ Project docs: README, CLAUDE.md, ROADMAP, ARCHITECTURE, DESIGN_SYSTEM, BUILD, DECISIONS
-- ◐ Repo skeleton (`system/`, `embedder/`, `shell/`, `apps/`, `packages/`, `kernel/`, `build/`, `third_party/`, `tools/`). Created as work needs it: `packages/halo_ui` exists
-- ◐ Pin versions: Flutter SDK (`.flutter-version`, done), Rust toolchain, kernel LTS, LLVM
-- ☐ Build container image (host tools only)
-- ☐ CI: format, lint and tests for Rust and Dart
+- ☑ Repo skeleton. Directories that have content exist (`system/`, `packages/`, `kernel/`, `build/`, `third_party/`); the rest are created when work needs them (CLAUDE.md)
+- ☑ Pin versions: Flutter 3.47.4 (`.flutter-version`), Rust 1.99.1 (`rust-toolchain.toml`), kernel 6.18.58 (`kernel/VERSION`), LLVM 23.1.4 (`third_party/manifest.toml`; reconcile with the Flutter engine clang before Phase 1)
+- ◐ Build container image (host tools only): `build/container/Containerfile` written, never built (no container runtime on the dev machine yet)
+- ◐ CI: format, lint and tests for Rust and Dart: `.github/workflows/ci.yml` written; every step passes locally, but it has not run on GitHub yet
 - ◐ License chosen (☐). Font licenses (OFL) recorded in `third_party/` (☑)
 
 **Exit:** a clean checkout runs `cargo test` and `flutter test` (empty but wired) in CI.

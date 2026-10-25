@@ -6,7 +6,7 @@ Guide for AI agents and contributors working in this repository.
 
 **Halo OS** is a mobile OS built from scratch on the **Linux kernel**, with **no distribution** (no Ubuntu, Debian, Alpine, postmarketOS or AOSP userspace). We own PID 1 and everything above it. **All UI is Flutter**: the system shell and the apps.
 
-Current status: **pre-alpha, docs and design only.** No code exists yet. Check [ROADMAP.md](ROADMAP.md) for the active phase before starting work, and tick off items (☐ → ◐ → ☑) as you complete them.
+Current status: **pre-alpha.** Docs, design, the `halo_ui` tokens and a placeholder Rust workspace exist. Nothing boots yet. Check [ROADMAP.md](ROADMAP.md) for the active phase before starting work, and tick off items (☐ → ◐ → ☑) as you complete them.
 
 ## Read first
 
@@ -69,7 +69,20 @@ Create directories when the work needs them. Don't scaffold empty trees ahead of
 
 ## Commands
 
-None exist yet. The planned interface is in [docs/BUILD.md §5](docs/BUILD.md). When you add a real command, document it here and in BUILD.md in the same change. Don't document commands that don't work.
+The `halo` build driver doesn't exist yet. The planned interface is in [docs/BUILD.md §5](docs/BUILD.md). When you add a real command, document it here and in BUILD.md in the same change. Don't document commands that don't work.
+
+What works today (same steps as `.github/workflows/ci.yml`):
+
+```sh
+# Rust (toolchain pinned in rust-toolchain.toml; rustup installs it)
+cd system && cargo fmt --check && cargo clippy --workspace --all-targets -- -D warnings && cargo test --workspace
+
+# Dart (Flutter pinned in .flutter-version)
+cd packages/halo_ui && dart format --output=none --set-exit-if-changed . && flutter analyze && flutter test
+
+# Token gallery on macOS
+cd packages/halo_ui/example && flutter run -d macos
+```
 
 Fast UI loop (once `shell/` exists): run the shell as a macOS desktop Flutter app with `--dart-define=HALO_BACKEND=mock` at a 390 × 844 window. Kernel, rootfs and image builds need Linux, so on macOS they run inside the build container.
 
